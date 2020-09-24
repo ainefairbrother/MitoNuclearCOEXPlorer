@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 .test_shiny.Rproj
-.data/
+.www/
+.R/
