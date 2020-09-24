@@ -5,7 +5,7 @@
 # allows bioconductor pkgs to be found by shiny.io server
 
 setwd("/home/abrowne/shiny/mito_nuc_shiny/")
-#load("./app_data.Rdata")
+#load("./data/app_data.Rdata")
 
 options(warn=-1)
 library(BiocManager)
