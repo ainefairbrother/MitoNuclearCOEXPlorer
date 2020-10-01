@@ -100,9 +100,9 @@ myapp = shinyApp(
                                         p(strong("ii."),"The median mito-nuclear correlation value of the,",em("t,")," (blue dashed line),"),
                                         p(strong("iii."),"The P-value for the shift of ",em("t "),"from random gene sets."),
                                         p("This example uses a Parkinson's Disease implicated gene set, with the background filtered for protein coding genes and
-                                          10,000 bootstrap lists:"),
+                                          1000 bootstrap lists:"),
                                         br(),
-                                        div(img(src="example_target_rand_list.png", width="80%"), style="text-align: center;"),
+                                        div(img(src="example_target_rand_list.png", width="100%"), style="text-align: center;"),
                                         br(),
                                         h4('Resources'),
                                         p("Gene sets can be downloaded from:"),
@@ -153,9 +153,9 @@ myapp = shinyApp(
                              checkboxInput(inputId="bkg", label="Filter background for protein coding genes only", value=FALSE), 
                              h4("Bootstraps"),
                              helpText("Enter the number of random gene sets to compare the target set against.
-                                      1000 recommended for accuracy of P-values, but is slower to render
+                                      10,000 recommended for accuracy of P-values, but is slower to render (~15mins for a gene set of size 40)
                                       ", style = "font-size:11px;"),
-                             radioButtons(inputId="iters", label=NULL, choices = c("10"=10, "100"=100, "1000"=1000, "10000 (~15mins)"=10000), selected = "10", inline = FALSE, width = NULL),
+                             radioButtons(inputId="iters", label=NULL, choices = c("10"=10, "100"=100, "1000"=1000, "10000"=10000), selected = "10", inline = FALSE, width = NULL),
                              br(),
                              submitButton(text = "Submit", icon = NULL, width = NULL),
                              hr(),
@@ -181,7 +181,7 @@ myapp = shinyApp(
                                         ),
                                         fluidRow(
                                           wellPanel(
-                                            h4("Gene set analysis: method details"),
+                                            h4("Gene set analysis method details"),
                                             p("For each GTEx CNS region, r, and the input gene set, l, the median nuclear-mitochondrial correlation value of l for r was calculated. 
                                               The distribution of nuclear-mitochondrial pairs is inclusive of all mitochondrial correlations for each gene, making the size of the distribution 
                                               (length of l)*13. To generate empirical distributions, a random sample of nuclear genes of length l is selected from the list of all genes expressed 
