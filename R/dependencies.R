@@ -1,0 +1,15 @@
+
+# dependencies for mito nuc brain browser
+library(rtracklayer)
+library(fst)
+library(BiocManager)
+library(plyr)
+library(parallel)
+library(tidyverse)
+library(shiny)
+library(shinythemes)
+library(shinycssloaders)
+library(dplyr)
+library(ggpubr)
+library(sjPlot)
+library(gridExtra)
