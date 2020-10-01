@@ -74,7 +74,11 @@ genDistributionPlotWithGene = function(gene, summary_brain){
     plots_sorted = plots[names(means_sorted)]
     
     # plotting panel of region plots
-    return(ggpubr::ggarrange(plotlist=plots_sorted, common.legend=TRUE))
+    plot_grid = ggpubr::ggarrange(plotlist=plots_sorted, common.legend=TRUE)
+    
+    return(ggpubr::annotate_figure(plot_grid,
+                                   bottom = text_grob("Plot produced using the mito-nuclear brain browser tool [https://snca.atica.um.es/mitonuclearbrainbrowser/]", color = "black",
+                                                      hjust = 1, x = 1, face = "italic", size = 10)))
 
   }
   

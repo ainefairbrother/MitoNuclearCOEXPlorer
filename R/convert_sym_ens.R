@@ -1,19 +1,12 @@
 
 convert_sym_ens = function(id_list, input_ENS=T, same_length=F, load_genespace=F){
-  
-  # library(BiocManager)
-  # options(repos = BiocManager::repositories())
-  
-  # import libs
-  library(plyr)
-  library(parallel)
-  
-  setwd("/home/abrowne/shiny/test_shiny/")
+
+  cores = detectCores(all.tests = FALSE, logical = TRUE)
   
   # define fn 
   get_conversion = function(gene_id){
     if(input_ENS == T){
-      conversion = Homo_sapiens.GRCh38.97[Homo_sapiens.GRCh38.97$gene_id == gene_id & Homo_sapiens.GRCh38.97$type == "gene"]$gene_name
+      conversion = grch[(grch$gene_id == gene_id) & (grch$type == "gene"),]$gene_name
       if(length(conversion) > 0 ){
         return(conversion)
       }
@@ -22,7 +15,7 @@ convert_sym_ens = function(id_list, input_ENS=T, same_length=F, load_genespace=F
       }
     }
     if(input_ENS == F){
-      conversion = Homo_sapiens.GRCh38.97[Homo_sapiens.GRCh38.97$gene_name %in% id_list & Homo_sapiens.GRCh38.97$type == "gene"]$gene_id
+      conversion = grch[(grch$gene_name %in% id_list) & (grch$type == "gene"),]$gene_id #Homo_sapiens.GRCh38.97
       if(length(conversion) > 0 ){
         return(conversion)
       }
@@ -34,19 +27,19 @@ convert_sym_ens = function(id_list, input_ENS=T, same_length=F, load_genespace=F
   
   # conditionally load genespace - could be loaded priorly if many lists are being passed
   if(load_genespace == T){
-    Homo_sapiens.GRCh38.97 = rtracklayer::import("./data/Homo_sapiens.GRCh38.97.gtf")
+    grch = read.fst("./data/grch3897.fst")
   }
   
   if(same_length==T){
-    converted_out_list = mclapply(id_list, get_conversion, mc.cores=50)
+    converted_out_list = mclapply(id_list, get_conversion, mc.cores=cores/2)
     return(unlist(converted_out_list))
   }
   if(same_length==F){
     if(input_ENS == T){
-      return(Homo_sapiens.GRCh38.97[Homo_sapiens.GRCh38.97$gene_id %in% id_list & Homo_sapiens.GRCh38.97$type == "gene"]$gene_name)
+      return(grch[(grch$gene_id %in% id_list) & (grch$type == "gene"),]$gene_name)
     }
     else{
-      return(Homo_sapiens.GRCh38.97[Homo_sapiens.GRCh38.97$gene_name %in% id_list & Homo_sapiens.GRCh38.97$type == "gene"]$gene_id)
+      return(grch[(grch$gene_name %in% id_list) & (grch$type == "gene"),]$gene_id)
     }
   }
 }

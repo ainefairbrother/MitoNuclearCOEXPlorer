@@ -1,11 +1,8 @@
-# shiny interface to allow querying of correlation data
 
 # ---------------------- imports ---------------------------------------
 
-# allows bioconductor pkgs to be found by shiny.io server
-
 setwd("/home/abrowne/shiny/mito_nuc_shiny/")
-#load("./data/app_data.Rdata")
+load("./data/app_data.Rdata")
 
 options(warn=-1)
 library(BiocManager)
@@ -26,7 +23,6 @@ source("./R/convert_sym_ens.R")
 source("./R/gen_gene_specific_distr_plot_fn.R")
 source("./R/single_gene_gen_fig.R")
 source("./R/test_list_for_enrichment_fn.R")
-
 
 # ---------------------- shiny initialise ------------------------------
 myapp = shinyApp(
@@ -374,9 +370,5 @@ myapp = shinyApp(
   }
   
 )
-
-# initiate app
-#runApp(myapp)
-
 
 

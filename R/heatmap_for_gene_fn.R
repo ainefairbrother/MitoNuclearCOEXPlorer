@@ -8,11 +8,6 @@
 
 heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
   
-  #setwd("/home/abrowne/shiny/test_shiny/")
-  
-  # importing convert fn. 
-  source("./R/convert_sym_ens.R")
-  
   if(grepl('ENS', gene)){
     gene_sym = convert_sym_ens(gene, load_genespace=F)
   }
@@ -96,9 +91,7 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
              geom_text(aes(label=sig_indicator), size=3) +
              labs(y="mtDNA-encoded gene", x="", fill=expression(rho), subtitle = "* 0.01<p<0.05, ** 0.001<p<0.01, *** p<0.001")
     
-    return(ggpubr::annotate_figure(p,
-                                   bottom = text_grob("Plot produced using the mito-nuclear brain browser tool [https://snca.atica.um.es/mitonuclearbrainbrowser/]", color = "black",
-                                                      hjust = 1, x = 1, face = "italic", size = 10)))
+    return(p)
     
   } else {
     return("")
@@ -106,4 +99,4 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
 }
 
 #test
-#heatmap_of_gene_corrs(gene="PINK1", summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194
+heatmap_of_gene_corrs(gene="PINK1", summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194

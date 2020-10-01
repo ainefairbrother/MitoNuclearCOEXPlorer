@@ -3,25 +3,19 @@
 
 rm(list=ls())
 
-wd = "/home/abrowne/shiny/test_shiny/"
+wd = "/home/abrowne/shiny/mito_nuc_shiny/"
 setwd(wd)
 
 library(rtracklayer)
 library(fst)
 
 summary_brain = read.fst("./data/GTEx_brain_summary_table.fst")
-summary_contols = read.fst("./data/GTEx_control_tissues_summary_table.fst")
+summary_controls = read.fst("./data/GTEx_control_tissues_summary_table.fst")
+grch = read.fst("./data/grch3897.fst")
 
-Homo_sapiens.GRCh38.97 = rtracklayer::import("/home/abrowne/gtf/Homo_sapiens.GRCh38.97.gtf")
-grch = as.data.frame(Homo_sapiens.GRCh38.97)
+#grch = as.data.frame(rtracklayer::import("/home/abrowne/gtf/Homo_sapiens.GRCh38.97.gtf"))
 
-# # importing fns
-# source("./R/convert_sym_ens.R")
-# source("./R/gen_gene_specific_distr_plot_fn.R")
-# source("./R/single_gene_gen_fig.R")
-# source("./R/test_list_for_enrichment_fn.R")
-
-save.image("./app_data.Rdata")
+save.image("./data/app_data.Rdata")
 
 rm(list=ls())
 

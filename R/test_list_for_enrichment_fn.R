@@ -9,17 +9,6 @@ densMode = function(x){
 
 test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_coding=F, return_which='plot'){
   
-  #setwd('/home/abrowne/shiny/test_shiny/')
-  
-  # import libs
-  # library(sjPlot)
-  # library(ggplot2)
-  # library(gridExtra)
-  # library(parallel)
-  
-  # importing convert fn. 
-  #source("./R/convert_sym_ens.R")
-  
   # split input string into list of genes
   gene_list_spl = strsplit(gene_list, ', ')[[1]]
   iters = as.double(iters)
