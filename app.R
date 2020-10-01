@@ -2,7 +2,7 @@
 # ---------------------- imports ---------------------------------------
 
 setwd("/home/abrowne/shiny/mito_nuc_shiny/")
-load("./data/app_data.Rdata")
+#load("./data/app_data.Rdata")
 
 options(warn=-1)
 library(BiocManager)
@@ -102,7 +102,7 @@ myapp = shinyApp(
                                         p("This example uses a Parkinson's Disease implicated gene set, with the background filtered for protein coding genes and
                                           10,000 bootstrap lists:"),
                                         br(),
-                                        div(img(src="example_target_rand_list.png", width="100%"), style="text-align: center;"),
+                                        div(img(src="example_target_rand_list.png", width="80%"), style="text-align: center;"),
                                         br(),
                                         h4('Resources'),
                                         p("Gene sets can be downloaded from:"),
