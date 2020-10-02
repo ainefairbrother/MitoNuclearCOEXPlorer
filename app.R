@@ -2,21 +2,21 @@
 # ---------------------- imports ---------------------------------------
 
 setwd("/home/abrowne/shiny/mito_nuc_shiny/")
-#load("./data/app_data.Rdata")
+load("./data/app_data.Rdata")
 
+options(gsubfn.engine = "R")
 options(warn=-1)
 library(BiocManager)
+library(plyr)
+library(dplyr)
 library(tidyverse)
 library(rtracklayer)
 library(fst)
 library(shiny)
 library(shinythemes)
 library(shinycssloaders)
-library(plyr)
-library(dplyr)
 library(parallel)
 library(ggpubr)
-options(gsubfn.engine = "R")
 
 # importing fns
 source("./R/convert_sym_ens.R")
