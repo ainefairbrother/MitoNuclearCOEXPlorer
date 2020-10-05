@@ -6,7 +6,7 @@ Levaraging transcriptomic data from the GTEx project, nuclear-mitochondrial co-o
 This repository contains the User Interface (UI) code for the Mito-nuclear Brain Browser platform and accompanying backend functions. 
 
 ## Getting Started
-**The Mito-nuclear Brain Browser can be reached following [https://snca.atica.um.es/mitonuclearbrainbrowser/](Mito-Nuclear Brain Browser).**
+**The Mito-nuclear Brain Browser can be reached following [https://snca.atica.um.es/mitonuclearbrainbrowser/] (Mito-Nuclear Brain Browser).**
 
 ## Related publication
 
