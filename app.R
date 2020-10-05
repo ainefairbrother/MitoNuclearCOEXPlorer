@@ -1,7 +1,7 @@
 
 # ---------------------- imports ---------------------------------------
 
-setwd("/home/abrowne/shiny/mito_nuc_shiny/")
+setwd("/home/abrowne/shiny/mito_nuclear_brain_browser/")
 #grch = read.fst("./data/grch3897.fst")
 load("./data/app_data.Rdata")
 
