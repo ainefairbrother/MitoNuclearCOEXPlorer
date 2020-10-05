@@ -9,11 +9,11 @@
 heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
   
   if(grepl('ENS', gene)){
-    gene_sym = convert_sym_ens(gene, load_genespace=F)
+    gene_sym = convert_sym_ens(gene)
   }
   if(!grepl('ENS', gene)){
     gene_sym = gene
-    gene = convert_sym_ens(gene, input_ENS=F, load_genespace=F)
+    gene = convert_sym_ens(gene, input_ENS=F)
   }
   
   if(gene %in% summary_brain$nuc_gene){
@@ -77,7 +77,7 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
                                          gsub("_spearman", "", summary_gene$region))))
     
     # # converting mt_gene genes
-    summary_gene$mt_gene = convert_sym_ens(summary_gene$mt_gene, load_genespace=F, same_length=T)
+    summary_gene$mt_gene = convert_sym_ens(summary_gene$mt_gene, same_length=TRUE)
 
     #plotting heatmap
     p = ggplot(summary_gene, aes(x=reorder(region, corrs), y=reorder(mt_gene, corrs), fill=corrs)) +
@@ -86,7 +86,7 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
              geom_tile() +
              theme(axis.text.x = element_text(angle = 45, hjust = 1)) + # rotates x axis
              ggtitle(gene_sym) +
-             theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0, face= "italic", size=9)) +
+             theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0, size=9)) +
              scale_fill_gradient2(low = "red", mid = "white", high = "blue", limits=c(-1,1)) +
              geom_text(aes(label=sig_indicator), size=3) +
              labs(y="mtDNA-encoded gene", x="", fill=expression(rho), subtitle = "* 0.01<p<0.05, ** 0.001<p<0.01, *** p<0.001")
@@ -99,4 +99,4 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
 }
 
 #test
-heatmap_of_gene_corrs(gene="PINK1", summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194
+#heatmap_of_gene_corrs(gene="PINK1", summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194

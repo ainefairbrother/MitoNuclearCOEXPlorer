@@ -2,6 +2,7 @@
 # ---------------------- imports ---------------------------------------
 
 setwd("/home/abrowne/shiny/mito_nuc_shiny/")
+#grch = read.fst("./data/grch3897.fst")
 load("./data/app_data.Rdata")
 
 options(gsubfn.engine = "R")

@@ -16,11 +16,11 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
   stopifnot(length(gene_list_spl) > 1)
   
   if(grepl('ENS', gene_list_spl[1])){
-    gene_sym = convert_sym_ens(gene_list_spl, load_genespace=F)
+    gene_sym = convert_sym_ens(gene_list_spl)
   }
   if(!grepl('ENS', gene_list_spl[1])){
     gene_sym = gene_list_spl
-    gene_list_spl = convert_sym_ens(gene_list_spl, input_ENS=F, load_genespace=F)
+    gene_list_spl = convert_sym_ens(gene_list_spl, input_ENS=F)
   }
   
   # test for gene list being protein coding
