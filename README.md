@@ -8,7 +8,7 @@
 This repository contains the User Interface (UI) code for the Mito-nuclear Brain Browser platform and accompanying back-end functions. 
 
 ## Getting Started
-The Mito-nuclear Brain Browser can be reached following [https://snca.atica.um.es/mitonuclearbrainbrowser/]
+The Mito-nuclear Brain Browser can be reached following https://snca.atica.um.es/mitonuclearbrainbrowser/
 
 ## Related publication
 
