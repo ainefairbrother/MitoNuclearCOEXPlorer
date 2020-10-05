@@ -19,5 +19,5 @@ The Mito-nuclear Brain Browser can be reached following https://snca.atica.um.es
   * Get in touch with Sonia at [s.ruiz@ucl.ac.uk](mailto:s.ruiz@ucl.ac.uk).
 
 ## Acknowledgments
-* All [RytenLab](https://snca.atica.um.es/RytenLab/Team) members
-* All [HodgkinsonLab](https://www.hodgkinsonlab.org/) members
+* [RytenLab](https://snca.atica.um.es/RytenLab/Team)
+* [HodgkinsonLab](https://www.hodgkinsonlab.org/)
