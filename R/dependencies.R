@@ -3,6 +3,7 @@
 library(BiocManager)
 library(plyr)
 library(dplyr)
+library(tidyr)
 library(tidyverse)
 library(rtracklayer)
 library(fst)
