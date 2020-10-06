@@ -1,10 +1,7 @@
 
 # ---------------------- imports ---------------------------------------
 
-setwd("/home/abrowne/shiny/mito_nuclear_brain_browser/")
-#grch = read.fst("./data/grch3897.fst")
-load("./data/app_data.Rdata")
-
+# load libs
 options(gsubfn.engine = "R")
 options(warn=-1)
 library(BiocManager)
@@ -19,6 +16,11 @@ library(shinycssloaders)
 library(parallel)
 library(ggpubr)
 
+# loading tables and assigning to global
+grch <<- read.fst("./data/grch3897.fst")
+summary_brain <<- read.fst("./data/GTEx_brain_summary_table.fst")
+summary_controls <<- read.fst("./data/GTEx_control_tissues_summary_table.fst")
+
 # importing fns
 source("./R/convert_sym_ens.R")
 source("./R/gen_gene_specific_distr_plot_fn.R")
@@ -26,15 +28,12 @@ source("./R/single_gene_gen_fig.R")
 source("./R/test_list_for_enrichment_fn.R")
 
 # ---------------------- shiny initialise ------------------------------
-myapp = shinyApp(
+shinyApp(
   
   # user interface
   ui = navbarPage("Mito-nuclear brain browser",
                   
                   #theme = shinytheme("yeti"),
-                  
-                  # tags$style(HTML(".navbar-default .navbar-nav > li > a[data-value='Explore data with gene'] {color: #7a89b8;}")),
-                  # tags$style(HTML(".navbar-default .navbar-nav > li > a[data-value='Explore data with gene set'] {color: #7a89b8;}")),
                   
                   tabPanel("Welcome",
                            
