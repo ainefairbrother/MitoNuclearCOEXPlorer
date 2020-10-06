@@ -20,21 +20,30 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
     
     ### preparing brain region data -----------------------------------------------------
     
+    # changed from pivot_longer to gather due to portability/ versioning issue on murcia server (shiny hosting)
+    # summary_brain %>% 
+    #   dplyr::filter(nuc_gene == "ENSG00000111404") %>% 
+    #   dplyr::select(matches("corr|gene")) %>% 
+    #   tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs") %>% 
+    #   dplyr::arrange(region)
+    
     # filtering for gene R value and pivoting data
     summary_gene_corrs = summary_brain %>% 
       dplyr::filter(nuc_gene == gene) %>% 
-      dplyr::select(matches("corr|gene")) %>% 
-      tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs") %>% 
+      dplyr::select(matches("corr|corrs|gene")) %>% 
+      tidyr::gather(key="region", value="corrs", -c("mt_gene", "nuc_gene", "gene_name")) %>% 
       dplyr::arrange(region)
+    summary_gene_corrs$region = gsub("_corrs", "", summary_gene_corrs$region)
     
     # getting pvalues 
     summary_gene_pval = summary_brain %>% 
       dplyr::filter(nuc_gene == gene) %>% 
-      dplyr::select(matches("pval|gene")) %>% 
-      tidyr::pivot_longer(cols=contains("pval"), names_to="region", values_to="pval") %>% 
+      dplyr::select(matches("pval")) %>% 
+      tidyr::gather(key="region", value="pval") %>% 
       dplyr::arrange(region)
+    summary_gene_pval$region = gsub("_pvals", "", summary_gene_pval$region)
     
-    summary_gene = dplyr::bind_cols(list(summary_gene_corrs, summary_gene_pval[,'pval']))
+    summary_gene = dplyr::bind_cols(list(summary_gene_corrs, pval=summary_gene_pval$pval))
     
     # df structure test
     if(dim(summary_gene)[1] != length(unique(summary_gene$region))*13){
@@ -47,21 +56,28 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
     ### preparing control region data -----------------------------------------------------
     if(gene %in% summary_controls$nuc_gene){
       
+      # ctrl_gene_corrs = summary_controls %>%
+      #   dplyr::filter(nuc_gene == gene) %>%
+      #   dplyr::select(matches("corr|gene")) %>%
+      #   tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs")
+      
       # filtering for gene R value and pivoting data
-      ctrl_gene_corrs = summary_controls %>%
-        dplyr::filter(nuc_gene == gene) %>%
-        dplyr::select(matches("corr|gene")) %>%
-        tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs")
+      ctrl_gene_corrs = summary_controls %>% 
+        dplyr::filter(nuc_gene == gene) %>% 
+        dplyr::select(matches("corr|gene")) %>% 
+        tidyr::gather(key="region", value="corrs", -c("mt_gene", "nuc_gene"))
+      ctrl_gene_corrs$region = gsub("_spearman_corrs", "", ctrl_gene_corrs$region)
       
-      # getting pvalues
-      ctrl_gene_pval = summary_controls %>%
-        dplyr::filter(nuc_gene == gene) %>%
-        dplyr::select(matches("pval|gene")) %>%
-        tidyr::pivot_longer(cols=contains("pval"), names_to="region", values_to="pval")
+      # getting pvalues 
+      ctrl_gene_pval = summary_controls %>% 
+        dplyr::filter(nuc_gene == gene) %>% 
+        dplyr::select(matches("pvals|gene")) %>% 
+        tidyr::gather(key="region", value="pval", -c("mt_gene", "nuc_gene"))
+      ctrl_gene_pval$region = gsub("_spearman_pvals", "", ctrl_gene_pval$region)
       
-      summary_gene_ctrl = dplyr::bind_cols(list(ctrl_gene_corrs, ctrl_gene_pval[,'pval']))
+      summary_gene_ctrl = dplyr::bind_cols(list(ctrl_gene_corrs, ctrl_gene_pval["pval"]))
       
-      summary_gene = summary_gene %>% dplyr::bind_rows(summary_gene, summary_gene_ctrl)
+      summary_gene = dplyr::bind_rows(summary_gene, summary_gene_ctrl)
     }
     
     

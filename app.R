@@ -5,10 +5,6 @@
 options(gsubfn.engine = "R")
 options(warn=-1)
 library(BiocManager)
-library(plyr)
-library(dplyr)
-library(tidyr)
-library(tidyverse)
 library(rtracklayer)
 library(fst)
 library(shiny)
@@ -16,6 +12,7 @@ library(shinythemes)
 library(shinycssloaders)
 library(parallel)
 library(ggpubr)
+library(tidyverse)
 
 # loading tables and assigning to global
 grch <<- read.fst("./data/grch3897.fst")
@@ -25,6 +22,7 @@ summary_controls <<- read.fst("./data/GTEx_control_tissues_summary_table.fst")
 # importing fns
 source("./R/convert_sym_ens.R")
 source("./R/gen_gene_specific_distr_plot_fn.R")
+source("./R/heatmap_for_gene_fn.R")
 source("./R/single_gene_gen_fig.R")
 source("./R/test_list_for_enrichment_fn.R")
 
@@ -247,7 +245,9 @@ shinyApp(
                                         p("Guy's Hospital"),
                                         p("Great Maze Pond"),
                                         p("London SE1 9RT"),
-                                        p(tagList(a("Visit the Hodgkinson Lab", href="https://www.hodgkinsonlab.org/")))
+                                        p(tagList(a("Visit the Hodgkinson Lab", href="https://www.hodgkinsonlab.org/"))),
+                                        br(),
+                                        p("For source code, see", tagList(a("Aine's GitHub", href="https://github.com/ainefairbrother/mito_nuclear_brain_browser")))
                                         
                                       )))))
   ),
@@ -255,7 +255,7 @@ shinyApp(
   # backend
   server = function(input, output){
     
-    output$single_gene_plots = renderPlot({
+    output$single_gene_plots <- renderPlot({
       
       # check to see if input gene is present in input data
       gene_sym_check = summary_brain %>%
@@ -311,7 +311,7 @@ shinyApp(
       )
     })
     
-    output$enrichments = renderPlot({
+    output$enrichments <- renderPlot({
       
       gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
       genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
