@@ -1,6 +1,6 @@
 GenFigSingleGene = function(arg1){
   
-  start.time = Sys.time()
+  # start.time = Sys.time()
   
   a = genDistributionPlotWithGene(arg1, summary_brain=summary_brain)
   
@@ -8,9 +8,9 @@ GenFigSingleGene = function(arg1){
 
   p = ggpubr::ggarrange(b,a,nrow=2,ncol=1,labels=c("A", "B"))
   
-  end.time = Sys.time()
-  time.taken = end.time - start.time
-  print(time.taken)
+  # end.time = Sys.time()
+  # time.taken = end.time - start.time
+  # print(time.taken)
 
   return(p)
   

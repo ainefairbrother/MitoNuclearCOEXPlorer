@@ -181,14 +181,13 @@ shinyApp(
                                         fluidRow(
                                           wellPanel(
                                             h4("Gene set analysis method details"),
-                                            p("For each GTEx CNS region, r, and the input gene set, l, the median nuclear-mitochondrial correlation value of l for r was calculated. 
-                                              The distribution of nuclear-mitochondrial pairs is inclusive of all mitochondrial correlations for each gene, making the size of the distribution 
-                                              (length of l)*13. To generate empirical distributions, a random sample of nuclear genes of length l is selected from the list of all genes expressed 
-                                              in all GTEx CNS regions (15,001) and all correlations with mitochondrial genes are included.
-                                              A two-tailed test is then carried out to determine whether l has a more extreme median nuclear-mitochondrial correlation value than could be expected by chance. 
-                                              To do this, the median of l is compared against k (the number of bootstrap sets used) medians of randomly selected gene sets. 
-                                              P-values are calculated as follows, where n is the number of random medians less extreme than the median of l:"),
-                                            p("P = (k-n)/k"),
+                                            p("For each GTEx CNS region, r, and each gene set, l, the median nuclear-mitochondrial correlation value of l for r was calculated. 
+                                              The distribution of nuclear-mitochondrial pairs was inclusive of all mitochondrial correlations for each nuclear gene, making the size of the distribution (length l)*13. 
+                                              To generate empirical distributions, a random sample of nuclear genes of matching biotype and length l was selected from the set of genes expressed in all GTEx CNS regions (15,001) and 
+                                              all correlations with mitochondrial genes were included. A two-tailed test was carried out to determine whether l had a more extreme median nuclear-mitochondrial correlation value than could be expected by chance. 
+                                              To this end, the median of l was compared to the medians of 10,000 randomly selected gene sets. P-values were calculated as follows, where k is the number of randomly selected sets, 
+                                              and n is the number of correlations more extreme than the median of l:"),
+                                            p("P=(k ± n)/k"),
                                             p("Calculation of a 0 P-value is a limitation imposed by the number of bootstraps, and so in these cases a P-value of P<1/(number of bootstraps) is reported.")
                                           )))),
                              width=6)),

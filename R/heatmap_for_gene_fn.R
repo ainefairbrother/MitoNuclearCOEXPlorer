@@ -20,13 +20,6 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
     
     ### preparing brain region data -----------------------------------------------------
     
-    # changed from pivot_longer to gather due to portability/ versioning issue on murcia server (shiny hosting)
-    # summary_brain %>% 
-    #   dplyr::filter(nuc_gene == "ENSG00000111404") %>% 
-    #   dplyr::select(matches("corr|gene")) %>% 
-    #   tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs") %>% 
-    #   dplyr::arrange(region)
-    
     # filtering for gene R value and pivoting data
     summary_gene_corrs = summary_brain %>% 
       dplyr::filter(nuc_gene == gene) %>% 
@@ -43,7 +36,7 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
       dplyr::arrange(region)
     summary_gene_pval$region = gsub("_pvals", "", summary_gene_pval$region)
     
-    summary_gene = dplyr::bind_cols(list(summary_gene_corrs, pval=summary_gene_pval$pval))
+    summary_gene = cbind(summary_gene_corrs %>% dplyr::select(-gene_name), pval=summary_gene_pval$pval)
     
     # df structure test
     if(dim(summary_gene)[1] != length(unique(summary_gene$region))*13){
@@ -54,11 +47,6 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
     
     ### preparing control region data -----------------------------------------------------
     if(gene %in% summary_controls$nuc_gene){
-      
-      # ctrl_gene_corrs = summary_controls %>%
-      #   dplyr::filter(nuc_gene == gene) %>%
-      #   dplyr::select(matches("corr|gene")) %>%
-      #   tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs")
       
       # filtering for gene R value and pivoting data
       ctrl_gene_corrs = summary_controls %>% 
@@ -74,9 +62,12 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
         tidyr::gather(key="region", value="pval", -c("mt_gene", "nuc_gene"))
       ctrl_gene_pval$region = gsub("_spearman_pvals", "", ctrl_gene_pval$region)
       
-      summary_gene_ctrl = dplyr::bind_cols(list(ctrl_gene_corrs, ctrl_gene_pval["pval"]))
+      summary_gene_ctrl = cbind(ctrl_gene_corrs, ctrl_gene_pval["pval"])
       
-      summary_gene = dplyr::bind_rows(summary_gene, summary_gene_ctrl)
+      print(head(summary_gene_ctrl))
+      print(head(summary_gene))
+      
+      summary_gene = rbind(summary_gene, summary_gene_ctrl)
     }
     
     
@@ -89,7 +80,9 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
     summary_gene$region = gsub("Brain", "", 
                                gsub("_corrs", "", 
                                     gsub("basalganglia", "BG", 
-                                         gsub("_spearman", "", summary_gene$region))))
+                                         gsub("_spearman", "", 
+                                              gsub("muscle", "Muscle", 
+                                                   gsub("heart", "Heart", summary_gene$region))))))
     
     # # converting mt_gene genes
     summary_gene$mt_gene = convert_sym_ens(summary_gene$mt_gene, same_length=TRUE)
