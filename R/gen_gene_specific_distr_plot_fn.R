@@ -14,7 +14,14 @@ genDistributionPlotWithGene = function(gene, summary_brain){
   
   # cleaning data
   # melt summary_brain
-  summary_brain = summary_brain %>% dplyr::select(matches('corr|nuc_gene')) %>% pivot_longer(2:13, names_to='region', values_to='R_value')
+  # summary_brain = summary_brain %>% 
+  #   dplyr::select(matches('corr|nuc_gene')) %>% 
+  #   pivot_longer(2:13, names_to='region', values_to='R_value')
+  
+  # filtering for gene R value and pivoting data
+  summary_brain = summary_brain %>% 
+    dplyr::select(matches("corr|nuc_gene")) %>% 
+    tidyr::gather(key="region", value="R_value", -c("nuc_gene"))
   
   # tidy region names
   summary_brain$region = gsub('_corrs', '', gsub('Brain', '', gsub('basalganglia', 'BG', summary_brain$region)))

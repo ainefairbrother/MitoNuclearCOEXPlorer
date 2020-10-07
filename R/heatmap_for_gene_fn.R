@@ -50,7 +50,6 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
       print(
         paste("Incorrect row number for summary_gene. Table does not contain a per-mt gene pair for", gene, "for every tissue")
       )
-      #break()
     }
     
     ### preparing control region data -----------------------------------------------------
