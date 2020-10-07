@@ -16,7 +16,7 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
   stopifnot(length(gene_list_spl) > 1)
   
   if(grepl('ENS', gene_list_spl[1])){
-    gene_sym = convert_sym_ens(gene_list_spl)
+    gene_sym = convert_sym_ens(gene_list_spl, input_ENS=T)
   }
   if(!grepl('ENS', gene_list_spl[1])){
     gene_sym = gene_list_spl
@@ -189,7 +189,6 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
         scale_colour_manual(name='', values=c('Target gene set'='blue','Random gene sets'='aquamarine3'))
       
       if(p == 1/iters){
-        #pl = pl + ggplot2::annotate('text', x=0.9, y=(densMode(rand_arr[, 'value'])$y)*2+0.2, hjust=1, label=paste('P < ', p), size=2.5)
         pl = pl + labs(subtitle = paste0(paste('P < ', p), 
                                          "\n", 
                                          paste('Median of all random sets = ',
@@ -200,7 +199,6 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
         
       }
       if(p != 1/iters){
-        #pl = pl + ggplot2::annotate('text', x=0.9, y=(densMode(rand_arr[, 'value'])$y)*2+0.2, hjust=1, label=paste('P = ', p), size=2.5)
         pl = pl + labs(subtitle = paste0(paste('P = ', p), 
                                          "\n", 
                                          paste('Median of all random sets = ',
@@ -216,26 +214,7 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
     }
   }
   
-  # RUN ANALYSIS
-  
-  # if(iters > 1000){
-  #   if(length(gene_list_spl)<10){
-  #     cores = 6
-  #     print(paste("Running analysis on", cores, "cores"))
-  #   }else{
-  #     cores=12
-  #     print(paste("Running analysis on", cores, "cores"))
-  #   }
-  #   
-  #   plot_vect = parallel::mclapply(region_names, prod_region_plot, mc.cores=cores) # mc.cores = cores to use
-  #   #plot_vect = lapply(region_names, prod_region_plot)
-  # }
-  
-  # overheads too much to make parallelisation worth it if iters aren't large= slows the code
-  # if(iters <= 1000){
-  #   plot_vect = lapply(region_names, prod_region_plot)
-  # }
-  
+  # RUN ANALYSIS AND RENDER PLOT
   print("Running analysis...")
   start.time = Sys.time()
 
@@ -264,19 +243,11 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
 # ls = as.vector(ls$EnsemblId.GRch38.)
 # ls = strsplit(ls, ', ')[[1]]
 
-#ls = c("ENSG00000159363, ENSG00000105409, ENSG00000131943, ENSG00000182578, ENSG00000204843, ENSG00000116675, ENSG00000100225, ENSG00000087086, ENSG00000177628, ENSG00000131979, ENSG00000030582, ENSG00000188906, ENSG00000143669, ENSG00000186868, ENSG00000125741, ENSG00000125779, ENSG00000116288, ENSG00000158828, ENSG00000184381, ENSG00000185345, ENSG00000180228, ENSG00000155961, ENSG00000196660, ENSG00000104635, ENSG00000142319, ENSG00000145335, ENSG00000104133, ENSG00000116096, ENSG00000159082, ENSG00000180176, ENSG00000104833, ENSG00000197969, ENSG00000069329, ENSG00000196998, ENSG00000111676, ENSG00000124788, ENSG00000204842, ENSG00000066427, ENSG00000147894, ENSG00000197386, ENSG00000154118, ENSG00000156475, ENSG00000112592")
-
-# ls = c("ENSG00000159363, ENSG00000105409")
-# 
+# ls = "ALKBH1, C1QBP, CDK5RAP1, CHCHD10, COA3, FASTKD2, FASTKD3, LRPPRC, MALSU1, METTL4, MPV17L2, MRPS27, MTG1, MTG2, MTRES1, NGRN, NSUN3, NSUN4, PRKAA1, RCC1L, RMND1, RPUSD3, RPUSD4, SHMT2, TACO1, TRMT10C, TRUB2, TSFM, UQCC1, UQCC2"
 # start.time = Sys.time()
 # test_list_for_enrichment(ls, iters=10, T)
 # end.time = Sys.time()
 # time.taken = end.time - start.time
 # print(time.taken)
-
-
-# 43 genes, 10k iters, 6 cores = 4.5mins
-# 43 genes, 10k iters, 12 cores = 3.1mins
-# 43 genes, 10k iters, 8 cores = 4.3mins
 
 
