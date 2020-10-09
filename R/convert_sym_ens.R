@@ -1,3 +1,7 @@
+
+# Aine Fairbrother-Browne
+# 2020
+
 convert_sym_ens = function(id_list, input_ENS=T, same_length=F, load_genespace=F){
   
   cores = detectCores(all.tests = FALSE, logical = TRUE)

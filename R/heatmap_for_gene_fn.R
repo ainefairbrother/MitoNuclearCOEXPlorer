@@ -1,12 +1,10 @@
-# fn. to gen heatmap to show mt-nuc correlations of a gene:
-# x-axis = brain region, y-axis = mt-genes
-# gene - ens id
-# summary_brain - needs to be pre-imported
-# include control tissues
-# supply a significance indicator 
-# convert mt genes
+
+# Aine Fairbrother-Browne
+# 2020
 
 heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
+  
+  # fn. to gen heatmap to show mt-nuc correlations of a gene
   
   if(grepl('ENS', gene)){
     gene_sym = convert_sym_ens(gene)
@@ -93,4 +91,4 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
 }
 
 #test
-heatmap_of_gene_corrs(gene="SOD2", summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194
+#heatmap_of_gene_corrs(gene="SOD2", summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194

@@ -1,5 +1,6 @@
-# function to take in a list of user-inputted genes
-# determines enrichment of this gene set in high -ve and +ve mito relationships
+
+# Aine Fairbrother-Browne
+# 2020
 
 densMode = function(x){
   td = density(x)
@@ -8,6 +9,9 @@ densMode = function(x){
 }
 
 test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_coding=F, return_which='plot'){
+  
+  # function to take in a list of user-inputted genes
+  # determines enrichment of this gene set in high -ve and +ve mito relationships
   
   # split input string into list of genes
   gene_list_spl = strsplit(gene_list, ', ')[[1]]
@@ -239,12 +243,8 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
   
 }
 
-# ls = read.csv('/home/abrowne/Gene_lists/panel_app_lists/Parkinson Disease and Complex Parkinsonism.tsv', sep='\t')
-# ls = as.vector(ls$EnsemblId.GRch38.)
-# ls = strsplit(ls, ', ')[[1]]
-
-# ls = "ALKBH1, C1QBP, CDK5RAP1, CHCHD10, COA3, FASTKD2, FASTKD3, LRPPRC, MALSU1, METTL4, MPV17L2, MRPS27, MTG1, MTG2, MTRES1, NGRN, NSUN3, NSUN4, PRKAA1, RCC1L, RMND1, RPUSD3, RPUSD4, SHMT2, TACO1, TRMT10C, TRUB2, TSFM, UQCC1, UQCC2"
 # start.time = Sys.time()
+# ls = "ALKBH1, C1QBP, CDK5RAP1"
 # test_list_for_enrichment(ls, iters=10, T)
 # end.time = Sys.time()
 # time.taken = end.time - start.time

@@ -1,4 +1,11 @@
 
+########################################################################
+######################## MitoNuclearCOEXPlorer #########################
+########################################################################
+
+# Aine Fairbrother-Browne
+# 2020
+
 # ---------------------- imports ---------------------------------------
 
 # load libs
@@ -36,6 +43,8 @@ shinyApp(
                   
                   tabPanel("Welcome",
                            
+                           # ---------------------- WELCOME TAB ------------------------------
+                           
                            fluidPage(
                              
                              br(),
@@ -66,7 +75,7 @@ shinyApp(
                                         p(strong("See below for analyses options offered by the mito-nuclear brain browser tool and example outputs."))
                                       )
                                ),
-                               
+
                                column(5,
                                       offset=1,
                                       wellPanel(
@@ -111,6 +120,8 @@ shinyApp(
                                         )
                                       ))))),
                   
+                  # ---------------------- SINGLE GENE ANALYSIS TAB ------------------------------
+                  
                   tabPanel(strong("Explore data with gene"),
                            
                            sidebarPanel(
@@ -134,6 +145,8 @@ shinyApp(
                              )
                            )
                   ),
+                  
+                  # ---------------------- GENE SET ANALYSIS TAB ------------------------------
                   
                   tabPanel(strong("Explore data with gene set"),
                            
@@ -192,6 +205,8 @@ shinyApp(
                                           )))),
                              width=6)),
                   
+                  # ---------------------- DOWNLOAD TAB ------------------------------
+                  
                   tabPanel('Download',
                            
                            fluidPage(
@@ -210,6 +225,8 @@ shinyApp(
                                         downloadButton("downloadCTRL", "Download")
                                       ))))),
                   
+                  # ---------------------- CITE US TAB ------------------------------
+                  
                   tabPanel('Cite us',
                            
                            fluidPage(
@@ -219,6 +236,8 @@ shinyApp(
                                       wellPanel(
                                         p('[Link to pre-print here]')
                                       ))))),
+                  
+                  # ---------------------- CONTACT TAB ------------------------------
                   
                   tabPanel("Contact",
                            
@@ -251,8 +270,11 @@ shinyApp(
                                       )))))
   ),
   
-  # backend
+  # ---------------------- BACKEND ------------------------------
+  
   server = function(input, output){
+    
+    # ---------------------- RENDER PLOTS------------------------------
     
     output$single_gene_plots <- renderPlot({
       
@@ -262,8 +284,10 @@ shinyApp(
       gene_ens_check = summary_brain %>%
         dplyr::filter(input$gene_text %in% gene_name)
       
-      validate(need(nrow(gene_sym_check) > 0 | nrow(gene_ens_check) > 0, "Gene not found in data"))
-      validate(need(input$gene_text != "", "Please provide a gene ID (ENS/symbol)"))
+      validate(need(nrow(gene_sym_check) > 0 | nrow(gene_ens_check) > 0, "
+                      Gene not found in data"))
+      validate(need(input$gene_text != "", "
+                      Please provide a gene ID (ENS/symbol)"))
       
       GenFigSingleGene(input$gene_text)
       
@@ -272,59 +296,32 @@ shinyApp(
     width = 800
     )
     
-    output$helpmsg <- renderText({
-      
-      gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
-      genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
-      genes_in_data = genes_in_data$nuc_gene
-      genes_in_data = as.character(unique(genes_in_data))
-      genes_not_found = as.character(setdiff(gene_list, genes_in_data))
-      
-      grch_list = grch %>%
-        dplyr::filter(gene_id %in% genes_in_data) %>% 
-        dplyr::select(c(gene_id, gene_biotype))
-      
-      msg = HTML(paste(
-        paste0(strong("Size of target set: "), length(gene_list)),
-        paste0(strong("Number of target set genes found in database: "), paste0(length(unique(genes_in_data)), "/", length(unique(gene_list)))),
-        paste0(strong("Target set genes not found in database: "), genes_not_found),
-        paste0(strong("Biotypes present in target set: "), unique(grch_list$gene_biotype)),
-        sep="<br/>"))
-      
-      return(msg)
-      
-    })
-    
-    output$helpmsg1 <- renderText({
-      
-      gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
-      genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
-      genes_in_data = genes_in_data$nuc_gene
-      genes_in_data = as.character(unique(genes_in_data))
-      
-      if((length(genes_in_data) < 20) & (length(gene_list) > 0)){
-        msg1 = HTML("Warning: gene set less than reccomended set size")
-        return(msg1)
-      }else(
-        return("")
-      )
-    })
-    
     output$enrichments <- renderPlot({
       
       gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
-      genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
-      genes_in_data = genes_in_data$nuc_gene
-      genes_in_data = as.character(unique(genes_in_data))
+      
+      if(grepl('ENSG', input$gene_list_text[1]) | grepl('ENSG', input$gene_list_text[2])){
+        genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
+        genes_in_data = genes_in_data$nuc_gene
+        genes_in_data = as.character(unique(genes_in_data))
+      } else{
+        genes_in_data = summary_brain %>% dplyr::filter(gene_name %in% gene_list) %>% dplyr::select(gene_name)
+        genes_in_data = genes_in_data$gene_name
+        genes_in_data = as.character(unique(genes_in_data))
+      }
       
       validate(need(input$gene_list_text != "", "
-                    Please provide a list of gene IDs (ENS/symbol) in the form: gene1, gene2, gene3"))
+  
+                      Please provide a list of gene IDs (ENS/symbol) in the form: gene1, gene2, gene3"))
       validate(need(length(genes_in_data) != 0, "
-                    Please provide a list of gene IDs (ENS/symbol) in the form: gene1, gene2, gene3"))
+
+                      Please provide a list of gene IDs (ENS/symbol) in the form: gene1, gene2, gene3"))
       validate(need(length(gene_list) >= 2, "
-                    Less than 2 genes entered"))
+
+                      Less than 2 genes entered"))
       validate(need(length(genes_in_data) >= 2, "
-                    Less than 2 genes found in data"))
+
+                      Less than 2 genes found in data"))
       
       test_list_for_enrichment(gene_list=input$gene_list_text, iters=input$iters, filt_bkg_for_protein_coding=input$bkg)
       
@@ -333,7 +330,59 @@ shinyApp(
     width = 1100
     )
     
-    # downloads
+    # ---------------------- RENDER WARNING MESSAGES ------------------------------
+    
+    output$helpmsg <- renderText({
+      
+      gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
+      
+      if(grepl('ENSG', input$gene_list_text[1]) | grepl('ENSG', input$gene_list_text[2])){
+        genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
+        genes_in_data = genes_in_data$nuc_gene
+        genes_in_data = as.character(unique(genes_in_data))
+      } else{
+        genes_in_data = summary_brain %>% dplyr::filter(gene_name %in% gene_list) %>% dplyr::select(gene_name)
+        genes_in_data = genes_in_data$gene_name
+        genes_in_data = as.character(unique(genes_in_data))
+      }
+      genes_not_found = as.character(as.vector(setdiff(gene_list, genes_in_data)))
+
+      grch_list = grch %>%
+        dplyr::filter(gene_id %in% genes_in_data) %>% 
+        dplyr::select(c(gene_id, gene_biotype))
+
+      return(HTML(paste(
+        paste0(strong("Size of target set: "), as.character(length(gene_list))),
+        paste0(strong("Number of target set genes found in database: "), paste0(as.character(length(unique(genes_in_data))), "/", as.character(length(unique(gene_list))))),
+        paste0(strong("Target set genes not found in database: "), stringr::str_flatten(genes_not_found, collapse = ", ")),
+        paste0(strong("Biotypes present in target set: "), as.character(as.vector(unique(grch_list$gene_biotype)))),
+        sep="<br/>")))
+      
+    })
+    
+    output$helpmsg1 <- renderText({
+      
+      gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
+      
+      if(grepl('ENSG', input$gene_list_text[1]) | grepl('ENSG', input$gene_list_text[2])){
+        genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
+        genes_in_data = genes_in_data$nuc_gene
+        genes_in_data = as.character(unique(genes_in_data))
+      } else{
+        genes_in_data = summary_brain %>% dplyr::filter(gene_name %in% gene_list) %>% dplyr::select(gene_name)
+        genes_in_data = genes_in_data$gene_name
+        genes_in_data = as.character(unique(genes_in_data))
+      }
+      
+      if((length(genes_in_data) < 20) & (length(gene_list) > 0)){
+        return(HTML("Warning: gene set less than reccomended set size"))
+      }else(
+        return("")
+      )
+    })
+    
+    # ---------------------- FILE DOWNLOADS ------------------------------
+    
     output$downloadCNS <- downloadHandler(
       filename = function(){
         paste("correlations_12_CNS_regions","csv",sep=".")
@@ -352,7 +401,7 @@ shinyApp(
     
     output$downloadSINGLEGENE <- downloadHandler(
       filename = function(){
-        paste0(input$gene_text, "_", Sys.time(), "_mito_nuclear_bb.png", sep="")
+        paste0("MitoNuclearCOEXPlorer_gene=", input$gene_text, "_", Sys.time(), ".png", sep="")
       },
       content=function(con){
         ggsave(con, device = "png", width=30, height=35, units="cm")
@@ -361,7 +410,7 @@ shinyApp(
     
     output$downloadENRICHMENT <- downloadHandler(
       filename = function(){
-        paste0("mito_nuc_BB_plot_n=", length(strsplit(input$gene_list_text, ', ')[[1]]), "_genes_bootstraps=", input$iters, "_", Sys.time(), ".png", sep="")
+        paste0("MitoNuclearCOEXPlorer_n=", length(strsplit(input$gene_list_text, ', ')[[1]]), "_bootstraps=", input$iters, "_", Sys.time(), ".png", sep="")
       },
       content=function(file){
         ggsave(file, device = "png", width=40, height=40, units="cm")

@@ -1,8 +1,11 @@
-# fn that generates a distribution plot of all gene-mt values (per region) with a red line for gene X to indicate where it lies on the distribution
+
+# Aine Fairbrother-Browne
+# 2020
 
 genDistributionPlotWithGene = function(gene, summary_brain){
   
-  #setwd('/home/abrowne/shiny/test_shiny/')
+  # fn that generates a distribution plot of all gene-mt values (per region) with a red line for gene X to indicate where it 
+  # lies on the distribution
   
   if(grepl('ENS', gene)){
     gene_sym = convert_sym_ens(gene, load_genespace=F)
