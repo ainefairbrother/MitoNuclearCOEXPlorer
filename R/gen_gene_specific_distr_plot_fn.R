@@ -87,7 +87,7 @@ genDistributionPlotWithGene = function(gene, summary_brain){
     plot_grid = ggpubr::ggarrange(plotlist=plots_sorted, common.legend=TRUE)
     
     return(ggpubr::annotate_figure(plot_grid,
-                                   bottom = text_grob("Plot produced using the mito-nuclear brain browser tool [https://snca.atica.um.es/mitonuclearbrainbrowser/]", color = "black",
+                                   bottom = text_grob("Plot produced using the MitoNuclearCOEXPlorer tool [https://snca.atica.um.es/MitoNuclearCOEXPlorer/]", color = "black",
                                                       hjust = 1, x = 1, face = "italic", size = 10)))
 
   }
