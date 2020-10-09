@@ -37,7 +37,7 @@ source("./R/test_list_for_enrichment_fn.R")
 shinyApp(
   
   # user interface
-  ui = navbarPage("Mito-nuclear brain browser",
+  ui = navbarPage("MitoNuclearCOEXPlorer",
                   
                   #theme = shinytheme("yeti"),
                   
@@ -50,7 +50,7 @@ shinyApp(
                              br(),
                              
                              titlePanel(
-                               h2(strong("Mito-nuclear brain browser"), align = "center")
+                               h2(strong("MitoNuclearCOEXPlorer"), align = "center")
                              ),
                              
                              #div(img(src="mt_nuc_schemat.png", width="10%"), style="text-align: center;"),
@@ -61,7 +61,7 @@ shinyApp(
                                column(8,
                                       offset=2,
                                       wellPanel(
-                                        h4(strong("Welcome to the mito-nuclear brain browser. This tool allows exploration of relationships between target gene(s) of
+                                        h4(strong("Welcome to the MitoNuclearCOEXPlorer. This tool allows exploration of relationships between target gene(s) of
                                                   nuclear origin and the mitochondrial genome")),
                                         br(),
                                         p("Levaraging transcriptomic data from the GTEx project, nuclear-mitochondrial
@@ -72,7 +72,7 @@ shinyApp(
                                         p("The rationale here being that co-expressed genes may be directly regulating each other, controlled by the same regulatory regime,
                                           functionally related, members of the same pathway or part of the same protein complex, and as such,
                                           the correlation of their expression is meaningful."),
-                                        p(strong("See below for analyses options offered by the mito-nuclear brain browser tool and example outputs."))
+                                        p(strong("See below for analyses options offered by the MitoNuclearCOEXPlorer tool and example outputs."))
                                       )
                                ),
 
@@ -81,7 +81,7 @@ shinyApp(
                                       wellPanel(
                                         h4(strong('Explore data with gene')),
                                         hr(),
-                                        p("At the resolution of a single nuclear gene,",em("x,")," the mito-nuclear brain browser can run analyses to determine:"),
+                                        p("At the resolution of a single nuclear gene,",em("x,")," the MitoNuclearCOEXPlorer can run analyses to determine:"),
                                         p(strong("1."), "The Spearman correlation value of,",em("x,")," with each mtDNA-encoded protein coding gene in 12
                                           CNS tissues and two other body tissues. This is output in the form of a heatmap. This example uses the ATG7 gene:"),
                                         br(),
@@ -246,7 +246,7 @@ shinyApp(
                                column(8,
                                       offset=2,
                                       wellPanel(
-                                        h3("Mito-nuclear brain browser was developed by Aine Fairbrother-Browne"),
+                                        h3("MitoNuclearCOEXPlorer was developed by Aine Fairbrother-Browne"),
                                         p('A collaboration between the Hodgkinson and Ryten laboratories'),
                                         br(),
                                         h4('For any questions related to this resource or publication please contact:'),
@@ -265,7 +265,7 @@ shinyApp(
                                         p("London SE1 9RT"),
                                         p(tagList(a("Visit the Hodgkinson Lab", href="https://www.hodgkinsonlab.org/"))),
                                         br(),
-                                        p("For source code, see", tagList(a("Aine's GitHub", href="https://github.com/ainefairbrother/mito_nuclear_brain_browser")))
+                                        p("For source code, see", tagList(a("Aine's GitHub", href="https://github.com/ainefairbrother/MitoNuclearCOEXPlorer")))
                                         
                                       )))))
   ),
@@ -385,7 +385,7 @@ shinyApp(
     
     output$downloadCNS <- downloadHandler(
       filename = function(){
-        paste("correlations_12_CNS_regions","csv",sep=".")
+        paste("MitoNuclearCOEXPlorer_correlations_12_CNS_regions","csv",sep=".")
       },
       content = function(con){
         file.copy('./data/GTEx_brain_summary_table.csv', con)
@@ -393,7 +393,7 @@ shinyApp(
     
     output$downloadCTRL <- downloadHandler(
       filename = function(){
-        paste("correlations_heart_and_muscle","csv",sep=".")
+        paste("MitoNuclearCOEXPlorer_correlations_heart_and_muscle","csv",sep=".")
       },
       content = function(con){
         file.copy('./data/GTEx_control_tissues_summary_table.csv', con)
