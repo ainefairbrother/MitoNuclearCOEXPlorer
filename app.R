@@ -15,7 +15,7 @@ library(BiocManager)
 library(rtracklayer)
 library(fst)
 library(shiny)
-library(shinythemes)
+library(shinythemes) 
 library(shinycssloaders)
 library(parallel)
 library(ggpubr)
@@ -76,7 +76,7 @@ shinyApp(
                                         p(strong("See below for analyses options offered by the MitoNuclearCOEXPlorer tool and example outputs."))
                                       )
                                ),
-
+                               
                                column(5,
                                       offset=1,
                                       wellPanel(
@@ -84,16 +84,17 @@ shinyApp(
                                         hr(),
                                         p("At the resolution of a single nuclear gene,",em("x,")," the MitoNuclearCOEXPlorer can run analyses to determine:"),
                                         p(strong("1."), "The Spearman correlation value of,",em("x,")," with each mtDNA-encoded protein coding gene in 12
-                                          CNS tissues and two other body tissues. This is output in the form of a heatmap. This example uses the ATG7 gene:"),
+                                          CNS tissues and two other body tissues. This is output in the form of a heatmap."),
+                                        p("This example uses the PINK1 gene:"),
                                         br(),
                                         div(img(src="example_heatmap.png", width="100%"), style="text-align: center;"),
                                         br(),
                                         br(),
-                                        p(strong("2."), "A visualisation of the position of gene, ",em("x"), ", the overall nuclear-mitochondrial correlation distribution for 12 GTEx CNS regions.
-                                          This is output in the form of a 12-panel density plot. This example uses the ATG7 gene:"),
+                                        p(strong("2."), "A visualisation of the median correlation statistic (across 13 MT genes) of gene, ",em("x,"),"compared to all other nuclear genes in 12 GTEx CNS regions.
+                                          This is output in the form of a 12-panel density plot."),
                                         br(),
                                         div(img(src="example_dist.png", width="100%"), style="text-align: center;"),
-                                        br()
+                                        br() 
                                       )
                                ),
                                
@@ -135,7 +136,11 @@ shinyApp(
                              submitButton(text = "Submit", icon = NULL, width = NULL),
                              hr(),
                              h4('Download'),
+                             br(),
                              downloadButton("downloadSINGLEGENE", "Download plot"),
+                             br(),
+                             br(),
+                             downloadButton("downloadSINGLEGENE_data", "Download .csv"),
                              width=3
                            ),
                            
@@ -173,7 +178,11 @@ shinyApp(
                              submitButton(text = "Submit", icon = NULL, width = NULL),
                              hr(),
                              h4('Download'),
+                             br(),
                              downloadButton("downloadENRICHMENT", "Download plot"),
+                             br(),
+                             br(),
+                             downloadButton("downloadENRICHMENT_data", "Download .csv"),
                              width=3),
                            
                            mainPanel(
@@ -347,11 +356,11 @@ shinyApp(
         genes_in_data = as.character(unique(genes_in_data))
       }
       genes_not_found = as.character(as.vector(setdiff(gene_list, genes_in_data)))
-
+      
       grch_list = grch %>%
         dplyr::filter(gene_id %in% genes_in_data) %>% 
         dplyr::select(c(gene_id, gene_biotype))
-
+      
       return(HTML(paste(
         paste0(strong("Size of target set: "), as.character(length(gene_list))),
         paste0(strong("Number of target set genes found in database: "), paste0(as.character(length(unique(genes_in_data))), "/", as.character(length(unique(gene_list))))),
@@ -409,6 +418,40 @@ shinyApp(
       }
     )
     
+    output$downloadSINGLEGENE_data <- downloadHandler(
+      filename = function(){
+        paste0("MitoNuclearCOEXPlorer_gene=", input$gene_text, "_", Sys.time(), ".csv", sep="")
+      },
+      content=function(con){
+        
+        df = summary_brain %>% 
+          dplyr::filter(nuc_gene == input$gene_text | gene_name == input$gene_text) %>% 
+          dplyr::select(-c(X)) %>% 
+          dplyr::relocate(gene_name, .after = mt_gene)
+        
+        # filtering for gene R value and pivoting data
+        df_r = df %>% 
+          dplyr::select(matches("corr|gene")) %>% 
+          tidyr::gather(key="GTEx_tissue", value="r_value", -c("mt_gene", "nuc_gene", "gene_name")) %>% 
+          dplyr::arrange(GTEx_tissue)
+        
+        # getting pvalues 
+        df_p = df %>% 
+          dplyr::select(matches("pval")) %>% 
+          tidyr::gather(key="GTEx_tissue", value="p_value") %>% 
+          dplyr::arrange(GTEx_tissue)
+        
+        final_df = cbind(df_r, p_value=df_p$p_value)
+        
+        final_df$GTEx_tissue = gsub("Brain", "", 
+                                    gsub("_corrs", "", 
+                                         gsub("_spearman", "", 
+                                              final_df$GTEx_tissue)))
+        
+        write.csv(final_df, con)
+      }
+    )
+    
     output$downloadENRICHMENT <- downloadHandler(
       filename = function(){
         paste0("MitoNuclearCOEXPlorer_n=", length(strsplit(input$gene_list_text, ', ')[[1]]), "_bootstraps=", input$iters, "_", Sys.time(), ".png", sep="")
@@ -417,6 +460,51 @@ shinyApp(
         ggsave(file, device = "png", width=40, height=40, units="cm")
       }
     )
+    
+    output$downloadENRICHMENT_data <- downloadHandler(
+      filename = function(){
+        paste0("MitoNuclearCOEXPlorer_geneset", "_", Sys.time(), ".csv", sep="")
+      },
+      content=function(con){
+        
+        gene_list_spl = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
+        
+        if(grepl('ENSG', gene_list_spl[1])){
+          df = summary_brain %>% 
+            dplyr::filter(nuc_gene %in% gene_list_spl) %>% 
+            dplyr::select(-c(X)) %>% 
+            dplyr::relocate(gene_name, .after = mt_gene)
+        } else{
+          df = summary_brain %>% 
+            dplyr::filter(gene_name %in% gene_list_spl) %>% 
+            dplyr::select(-c(X)) %>% 
+            dplyr::relocate(gene_name, .after = mt_gene)
+        }
+        
+        # filtering for gene R value and pivoting data
+        df_r = df %>% 
+          dplyr::select(matches("corr|gene")) %>% 
+          tidyr::gather(key="GTEx_tissue", value="r_value", -c("mt_gene", "nuc_gene", "gene_name")) %>% 
+          dplyr::arrange(GTEx_tissue)
+        
+        # getting pvalues 
+        df_p = df %>% 
+          dplyr::select(matches("pval")) %>% 
+          tidyr::gather(key="GTEx_tissue", value="p_value") %>% 
+          dplyr::arrange(GTEx_tissue)
+        
+        final_df = cbind(df_r, p_value=df_p$p_value)
+        
+        final_df$GTEx_tissue = gsub("Brain", "", 
+                                    gsub("_corrs", "", 
+                                         gsub("_spearman", "", 
+                                              final_df$GTEx_tissue)))
+        
+        write.csv(final_df, con)
+      }
+    )
+    
+    
   }
   
 )
