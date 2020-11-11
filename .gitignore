@@ -4,3 +4,5 @@
 .Ruserdata
 .test_shiny.Rproj
 data/
+.Renviron
+aws_api_example.R

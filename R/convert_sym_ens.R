@@ -4,7 +4,6 @@
 
 convert_sym_ens = function(id_list, input_ENS=T, same_length=F, load_genespace=F){
   
-  library(parallel)
   cores = parallel::detectCores(all.tests = FALSE, logical = TRUE)
   
   # define fn 
