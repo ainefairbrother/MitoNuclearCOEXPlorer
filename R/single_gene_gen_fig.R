@@ -9,20 +9,17 @@ GenFigSingleGene = function(arg1){
   a = genDistributionPlotWithGene(arg1, summary_brain=summary_brain)
   
   b = heatmap_of_gene_corrs(arg1, summary_brain, summary_controls=summary_controls)
-
+  
   p = ggpubr::ggarrange(b,a,nrow=2,ncol=1,labels=c("A", "B"))
   
-  # end.time = Sys.time()
-  # time.taken = end.time - start.time
-  # print(time.taken)
-
-  return(p)
-  
+  return(ggpubr::annotate_figure(p,
+                                 bottom = text_grob("Plot produced using the MitoNuclearCOEXPlorer tool [https://snca.atica.um.es/MitoNuclearCOEXPlorer/]", color = "black",
+                                                    hjust = 1, x = 1, face = "italic", size = 10)))
 }
 
 # start.time = Sys.time()
-# GenFigSingleGene('ENSG00000197548')
+# GenFigSingleGene('ATG7')
 # end.time = Sys.time()
 # time.taken = end.time - start.time
 # print(time.taken)
-# 1.14 mins
+# 19s

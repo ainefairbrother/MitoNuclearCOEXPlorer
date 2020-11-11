@@ -30,9 +30,6 @@ genDistributionPlotWithGene = function(gene, summary_brain){
     region = unique(gene_mean_across_mt_df$region),
     label = unique(gene_mean_across_mt_df$gene_mean_across_mt))
   
-  print(gene_mean_label_df)
-  print(typeof(gene_mean_label_df))
-  
   distPlot = ggplot(data=summary_brain_clean, aes(x=R_value)) +
     theme_classic(base_size=11) +
     theme(plot.title = element_text(hjust = 0.5)) +
@@ -69,12 +66,6 @@ genDistributionPlotWithGene = function(gene, summary_brain){
                        labels = paste(gene_sym, 'mean correlation value across 13 mtDNA genes'))
 
   return(distPlot)
-  
-  
-  #   return(ggpubr::annotate_figure(plot_grid,
-  #                                  bottom = text_grob("Plot produced using the MitoNuclearCOEXPlorer tool [https://snca.atica.um.es/MitoNuclearCOEXPlorer/]", color = "black",
-  #                                                     hjust = 1, x = 1, face = "italic", size = 10)))
-  
   
 }
 
