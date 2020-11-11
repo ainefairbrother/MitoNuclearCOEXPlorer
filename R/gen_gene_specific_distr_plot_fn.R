@@ -31,7 +31,7 @@ genDistributionPlotWithGene = function(gene, summary_brain){
     label = unique(gene_mean_across_mt_df$gene_mean_across_mt))
   
   distPlot = ggplot(data=summary_brain_clean, aes(x=R_value)) +
-    theme_classic(base_size=11) +
+    theme_minimal(base_size=11) +
     theme(plot.title = element_text(hjust = 0.5)) +
     theme(legend.position="top") +
     geom_density(fill='#ECDEFF', colour='white') +
@@ -69,6 +69,7 @@ genDistributionPlotWithGene = function(gene, summary_brain){
   
 }
 
+# #test
 # start.time = Sys.time()
 # genDistributionPlotWithGene(gene='ATG7', summary_brain=summary_brain)
 # end.time = Sys.time()

@@ -164,7 +164,7 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
         gather()
       
       pl = ggplot() +
-        theme_classic(base_size=10) +
+        theme_minimal(base_size=10) +
         xlim(-1,1) + 
         ggtitle(region) +
         xlab(expression(rho)) + 

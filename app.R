@@ -307,7 +307,7 @@ shinyApp(
       GenFigSingleGene(input$gene_text)
       
     },
-    height = 1000,
+    height = 1200,
     width = 800
     )
     

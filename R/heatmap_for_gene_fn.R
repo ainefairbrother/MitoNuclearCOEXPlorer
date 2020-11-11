@@ -76,7 +76,7 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
   
   #plotting heatmap
   p = ggplot(summary_gene, aes(x=reorder(region, corrs), y=reorder(mt_gene, corrs), fill=corrs)) +
-    theme_classic(base_size=11) +
+    theme_minimal(base_size=11) +
     theme(plot.title = element_text(hjust = 0.5)) +
     geom_tile() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) + # rotates x axis
