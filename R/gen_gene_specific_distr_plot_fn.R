@@ -15,90 +15,72 @@ genDistributionPlotWithGene = function(gene, summary_brain){
     gene = convert_sym_ens(gene, input_ENS=F, load_genespace=F)
   }
   
-  # cleaning data
-  # melt summary_brain
-  # summary_brain = summary_brain %>% 
-  #   dplyr::select(matches('corr|nuc_gene')) %>% 
-  #   pivot_longer(2:13, names_to='region', values_to='R_value')
-  
   # filtering for gene R value and pivoting data
-  summary_brain = summary_brain %>% 
+  summary_brain_clean = summary_brain %>% 
     dplyr::select(matches("corr|nuc_gene")) %>% 
-    tidyr::gather(key="region", value="R_value", -c("nuc_gene"))
+    tidyr::gather(key="region", value="R_value", -c("nuc_gene")) %>% 
+    dplyr::mutate(region = gsub('_corrs', '', gsub('Brain', '', gsub('basalganglia', 'BG', region))))
+    
+  gene_mean_across_mt_df = summary_brain_clean %>% 
+    dplyr::filter(nuc_gene == gene) %>% 
+    dplyr::group_by(region) %>%
+    dplyr::mutate(gene_mean_across_mt = round(mean(R_value), 4))
   
-  # tidy region names
-  summary_brain$region = gsub('_corrs', '', gsub('Brain', '', gsub('basalganglia', 'BG', summary_brain$region)))
+  gene_mean_label_df = data.frame(
+    region = unique(gene_mean_across_mt_df$region),
+    label = unique(gene_mean_across_mt_df$gene_mean_across_mt))
   
-  region_names = as.vector(unique(summary_brain$region))
+  print(gene_mean_label_df)
+  print(typeof(gene_mean_label_df))
   
-  prod_region_plot = function(val_){
+  distPlot = ggplot(data=summary_brain_clean, aes(x=R_value)) +
+    theme_classic(base_size=11) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    theme(legend.position="top") +
+    geom_density(fill='#ECDEFF', colour='white') +
+    facet_wrap(facets=vars(region), nrow=4, ncol=3) +
+    xlim(-1,1) +
+    xlab(expression(rho)) +
+    ylab('Density') +
     
-    region_df = summary_brain %>% dplyr::filter(region == val_)
+    # add line to indicate mean rho of gene across 13 mt genes
+    geom_vline(
+      data = gene_mean_label_df,
+      mapping = aes(
+      xintercept = label,
+      colour='mean correlation value across 13 mtDNA genes'),
+      linetype='dashed',
+      size=0.5) +
     
-    gene_df = summary_brain %>% dplyr::filter(nuc_gene == gene) %>% filter(region == val_)
+    # add annotation to distplot: mean rho
+    geom_label(
+      size=3,
+      data = gene_mean_label_df,
+      mapping = aes(label=paste0("\U03BC", '=', label),
+                    x = as.numeric(label),
+                    y = 0.3),
+      fill='darkgrey',
+      colour = 'white',
+      fontface = 'bold'
+    )  +
     
-    mean_mt_R = mean(gene_df$R_value)
-    
-    #vertical_lines = filter_df$R_value
+    # add legend 
+    scale_color_manual(name = '', values = c('mean correlation value across 13 mtDNA genes'= '#3016FF'),
+                       labels = paste(gene_sym, 'mean correlation value across 13 mtDNA genes'))
 
-    distPlot = ggplot(data=region_df, aes(x=R_value)) +
-      theme_classic(base_size=11) +
-      theme(plot.title = element_text(hjust = 0.5)) +
-      geom_density(fill='aquamarine3') +
-      ggtitle(val_) +
-      xlim(-1,1) +
-      xlab(expression(rho)) +
-      ylab('Density') +
-      geom_vline(aes_q(
-        xintercept = mean_mt_R,
-        colour='mean correlation value across 13 mtDNA genes'),
-        linetype='dashed', size=0.5) +
-      theme(legend.position = c(0.9,0.9)) +
-      scale_color_manual(name = '', values = c('mean correlation value across 13 mtDNA genes'= 'aquamarine4'),
-                         labels = paste(gene_sym, 'mean correlation value across 13 mtDNA genes'))
-    
-    return(distPlot)
-  }
+  return(distPlot)
   
-  prod_region_mean = function(val_){
-    
-    region_df = summary_brain %>% dplyr::filter(region == val_)
-    
-    gene_df = summary_brain %>% dplyr::filter(nuc_gene == gene) %>% filter(region == val_)
-    
-    mean_mt_R = mean(gene_df$R_value)
-    
-    return(mean_mt_R)
-  }
   
-  # if gene is present, run both functions
-  if(gene %in% summary_brain$nuc_gene){
-
-    plots = mclapply(region_names, prod_region_plot, mc.cores=3)
-    names(plots) = region_names
-    means = mclapply(region_names, prod_region_mean, mc.cores=3)
-    names(means) = region_names
-    
-    # sorting plots by mean(mt)
-    means_sorted = means[order(unlist(means), decreasing = T)]
-    plots_sorted = plots[names(means_sorted)]
-    
-    # plotting panel of region plots
-    plot_grid = ggpubr::ggarrange(plotlist=plots_sorted, common.legend=TRUE)
-    
-    return(ggpubr::annotate_figure(plot_grid,
-                                   bottom = text_grob("Plot produced using the MitoNuclearCOEXPlorer tool [https://snca.atica.um.es/MitoNuclearCOEXPlorer/]", color = "black",
-                                                      hjust = 1, x = 1, face = "italic", size = 10)))
-
-  }
+  #   return(ggpubr::annotate_figure(plot_grid,
+  #                                  bottom = text_grob("Plot produced using the MitoNuclearCOEXPlorer tool [https://snca.atica.um.es/MitoNuclearCOEXPlorer/]", color = "black",
+  #                                                     hjust = 1, x = 1, face = "italic", size = 10)))
+  
   
 }
 
 # start.time = Sys.time()
-# genDistributionPlotWithGene(gene='ENSG00000197548', summary_brain=summary_brain)
+# genDistributionPlotWithGene(gene='ATG7', summary_brain=summary_brain)
 # end.time = Sys.time()
 # time.taken = end.time - start.time
 # print(time.taken)
-
-# 3 cores 49 secs
 

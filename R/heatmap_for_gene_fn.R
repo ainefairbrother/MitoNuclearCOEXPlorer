@@ -91,4 +91,13 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
 }
 
 #test
-#heatmap_of_gene_corrs(gene="SOD2", summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194
+start.time = Sys.time()
+print(heatmap_of_gene_corrs(gene="SOD2", summary_brain=summary_brain, summary_controls=summary_controls)) #ENSG00000005194
+end.time = Sys.time()
+time.taken = end.time - start.time
+print(time.taken)
+
+# this fn. alone takes just 4s
+
+
+

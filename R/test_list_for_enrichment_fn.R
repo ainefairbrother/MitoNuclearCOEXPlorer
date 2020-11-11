@@ -243,11 +243,11 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
   
 }
 
-# start.time = Sys.time()
-# ls = "ALKBH1, C1QBP, CDK5RAP1"
-# test_list_for_enrichment(ls, iters=10, T)
-# end.time = Sys.time()
-# time.taken = end.time - start.time
-# print(time.taken)
+start.time = Sys.time()
+ls = "ALKBH1, C1QBP, CDK5RAP1"
+test_list_for_enrichment(ls, iters=100, T)
+end.time = Sys.time()
+time.taken = end.time - start.time
+print(time.taken)
 
 
