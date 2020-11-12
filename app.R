@@ -21,26 +21,23 @@ library(shiny)
 library(shinycssloaders)
 library(parallel)
 library(ggpubr)
-library(plyr)
-library(dplyr)
-library(ggplot2)
-library(stringr)
-library(readr)
+library(tidyverse)
 library(aws.s3)
+library(lobstr)
 
 # read files from AWS -- data remote repository AWS bucket
 Sys.setenv("AWS_ACCESS_KEY_ID"=Sys.getenv("AWS_ACCESS_KEY_ID"),
            "AWS_SECRET_ACCESS_KEY"=Sys.getenv("AWS_SECRET_ACCESS_KEY"),
            "AWS_DEFAULT_REGION"=Sys.getenv("AWS_DEFAULT_REGION"))
 
-summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
-summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
-grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897.fst")
-
-# # loading tables and assigning to global -- local running
+# # # loading tables and assigning to global -- local running
 # grch <<- read.fst("./data/grch3897.fst")
 # summary_brain <<- read.fst("./data/GTEx_brain_summary_table.fst")
 # summary_controls <<- read.fst("./data/GTEx_control_tissues_summary_table.fst")
+
+summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
+summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
+grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
 
 # importing fns
 source("./R/convert_sym_ens.R")
@@ -304,6 +301,7 @@ shinyApp(
   # ---------------------- BACKEND ------------------------------
   
   server = function(input, output){
+    
     
     # ---------------------- RENDER PLOTS------------------------------
     

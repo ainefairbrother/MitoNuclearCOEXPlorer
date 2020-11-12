@@ -23,36 +23,33 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
   }
   
   ### preparing brain region data -----------------------------------------------------
-  
-  # filtering for gene R value and pivoting data
-  summary_gene_corrs = summary_brain %>% 
-    dplyr::filter(nuc_gene == gene) %>% 
-    dplyr::select(matches("corr|gene")) %>% 
-    tidyr::gather(key="region", value="corrs", -c("mt_gene", "nuc_gene", "gene_name")) %>% 
+
+  summary_gene_corrs = summary_brain %>%
+    dplyr::filter(nuc_gene == gene) %>%
+    dplyr::select(matches("corr|gene")) %>%
+    tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs") %>%
     dplyr::arrange(region)
   
-  # getting pvalues 
-  summary_gene_pval = summary_brain %>% 
-    dplyr::filter(nuc_gene == gene) %>% 
+  summary_gene_pval = summary_brain %>%
+    dplyr::filter(nuc_gene == gene) %>%
     dplyr::select(matches("pval")) %>% 
-    tidyr::gather(key="region", value="pval") %>% 
+    tidyr::pivot_longer(cols=contains("pval"), names_to="region", values_to="pval") %>%
     dplyr::arrange(region)
   
   summary_gene = cbind(summary_gene_corrs %>% dplyr::select(-gene_name), pval=summary_gene_pval$pval)
   
   ### preparing control region data -----------------------------------------------------
   
-  # filtering for gene R value and pivoting data
-  ctrl_gene_corrs = summary_controls %>% 
-    dplyr::filter(nuc_gene == gene) %>% 
-    dplyr::select(matches("corr|gene")) %>% 
-    tidyr::gather(key="region", value="corrs", -c("mt_gene", "nuc_gene"))
+  ctrl_gene_corrs = summary_controls %>%
+    dplyr::filter(nuc_gene == gene) %>%
+    dplyr::select(matches("corr|gene")) %>%
+    tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs")
   
   # getting pvalues 
   ctrl_gene_pval = summary_controls %>% 
     dplyr::filter(nuc_gene == gene) %>% 
     dplyr::select(matches("pvals|gene")) %>% 
-    tidyr::gather(key="region", value="pval", -c("mt_gene", "nuc_gene"))
+    tidyr::pivot_longer(cols=contains("pval"), names_to="region", values_to="pval")
   
   summary_gene_ctrl = cbind(ctrl_gene_corrs, ctrl_gene_pval["pval"])
   
