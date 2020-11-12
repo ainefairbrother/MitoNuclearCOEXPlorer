@@ -11,11 +11,10 @@
 # load libs
 options(gsubfn.engine = "R")
 options(warn=-1)
-# library(BiocManager)
+library(BiocManager)
 options("repos" = c(
   BiocManager::repositories(),
-  "CRAN" = "https://cran.rstudio.com",
-  "svn.r-project" = "https://svn.r-project.org"))
+  "CRAN" = "https://cran.rstudio.com"))
 library(fst)
 library(shiny)
 library(shinycssloaders)
@@ -38,9 +37,9 @@ Sys.setenv("AWS_ACCESS_KEY_ID"=Sys.getenv("AWS_ACCESS_KEY_ID"),
 # summary_brain <<- read.fst("./data/GTEx_brain_summary_table.fst")
 # summary_controls <<- read.fst("./data/GTEx_control_tissues_summary_table.fst")
 
-# summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
-# summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
-# grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
+summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
+summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
+grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
 
 # importing fns
 source("./R/convert_sym_ens.R")
@@ -305,16 +304,10 @@ shinyApp(
   
   server = function(input, output){
     
-
-    
     
     # ---------------------- RENDER PLOTS------------------------------
     
     output$single_gene_plots <- renderPlot({
-      
-      summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
-      grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
-
       
       # check to see if input gene is present in input data
       validate(need(nrow(summary_brain %>%
@@ -333,21 +326,10 @@ shinyApp(
     
     output$enrichments <- renderPlot({
       
-      summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
-      summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
-      grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
-      
       gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
       
-      if(grepl('ENSG', input$gene_list_text[1]) | grepl('ENSG', input$gene_list_text[2])){
-        genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
-        genes_in_data = genes_in_data$nuc_gene
-        genes_in_data = as.character(unique(genes_in_data))
-      } else{
-        genes_in_data = summary_brain %>% dplyr::filter(gene_name %in% gene_list) %>% dplyr::select(gene_name)
-        genes_in_data = genes_in_data$gene_name
-        genes_in_data = as.character(unique(genes_in_data))
-      }
+      # if(grepl('ENSG', input$gene_list_text[1]) | grepl('ENSG', input$gene_list_text[2])){
+      genes_in_data = summary_brain %>% dplyr::filter((nuc_gene %in% gene_list) | (gene_name %in% gene_list)) %>% dplyr::pull(nuc_gene) %>% as.character() %>% unique()
       
       validate(need(input$gene_list_text != "", "
   
@@ -375,15 +357,17 @@ shinyApp(
       
       gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
       
-      if(grepl('ENSG', input$gene_list_text[1]) | grepl('ENSG', input$gene_list_text[2])){
-        genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
-        genes_in_data = genes_in_data$nuc_gene
-        genes_in_data = as.character(unique(genes_in_data))
-      } else{
-        genes_in_data = summary_brain %>% dplyr::filter(gene_name %in% gene_list) %>% dplyr::select(gene_name)
-        genes_in_data = genes_in_data$gene_name
-        genes_in_data = as.character(unique(genes_in_data))
-      }
+      # if(grepl('ENSG', input$gene_list_text[1]) | grepl('ENSG', input$gene_list_text[2])){
+      #   genes_in_data = summary_brain %>% dplyr::filter(nuc_gene %in% gene_list) %>% dplyr::select(nuc_gene)
+      #   genes_in_data = genes_in_data$nuc_gene
+      #   genes_in_data = as.character(unique(genes_in_data))
+      # } else{
+      #   genes_in_data = summary_brain %>% dplyr::filter(gene_name %in% gene_list) %>% dplyr::select(gene_name)
+      #   genes_in_data = genes_in_data$gene_name
+      #   genes_in_data = as.character(unique(genes_in_data))
+      # }
+      genes_in_data = summary_brain %>% dplyr::filter((nuc_gene %in% gene_list) | (gene_name %in% gene_list)) %>% dplyr::pull(nuc_gene) %>% as.character() %>% unique()
+      
       genes_not_found = as.character(as.vector(setdiff(gene_list, genes_in_data)))
       
       grch_list = grch %>%

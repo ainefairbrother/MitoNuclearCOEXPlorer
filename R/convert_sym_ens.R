@@ -34,7 +34,8 @@ convert_sym_ens = function(id_list, input_ENS=T, same_length=F, load_genespace=F
   }
   
   if(same_length==T){
-    converted_out_list = mclapply(id_list, get_conversion, mc.cores=cores/4)
+    #converted_out_list = mclapply(id_list, get_conversion, mc.cores=cores/4)
+    converted_out_list = lapply(id_list, get_conversion)
     return(unlist(converted_out_list))
   }
   if(same_length==F){
