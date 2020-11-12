@@ -11,17 +11,20 @@
 # load libs
 options(gsubfn.engine = "R")
 options(warn=-1)
-library(BiocManager)
+# library(BiocManager)
 options("repos" = c(
-  BiocManager::repositories(), 
-  "CRAN" = "https://cran.rstudio.com", 
+  BiocManager::repositories(),
+  "CRAN" = "https://cran.rstudio.com",
   "svn.r-project" = "https://svn.r-project.org"))
 library(fst)
 library(shiny)
 library(shinycssloaders)
 library(parallel)
 library(ggpubr)
-library(tidyverse)
+library(tidyr)
+library(dplyr)
+library(ggpubr)
+library(ggplot2)
 library(aws.s3)
 library(lobstr)
 
@@ -35,9 +38,9 @@ Sys.setenv("AWS_ACCESS_KEY_ID"=Sys.getenv("AWS_ACCESS_KEY_ID"),
 # summary_brain <<- read.fst("./data/GTEx_brain_summary_table.fst")
 # summary_controls <<- read.fst("./data/GTEx_control_tissues_summary_table.fst")
 
-summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
-summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
-grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
+# summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
+# summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
+# grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
 
 # importing fns
 source("./R/convert_sym_ens.R")
@@ -302,18 +305,21 @@ shinyApp(
   
   server = function(input, output){
     
+
+    
     
     # ---------------------- RENDER PLOTS------------------------------
     
     output$single_gene_plots <- renderPlot({
       
-      # check to see if input gene is present in input data
-      gene_sym_check = summary_brain %>%
-        dplyr::filter(input$gene_text %in% nuc_gene)
-      gene_ens_check = summary_brain %>%
-        dplyr::filter(input$gene_text %in% gene_name)
+      summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
+      grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
+
       
-      validate(need(nrow(gene_sym_check) > 0 | nrow(gene_ens_check) > 0, "
+      # check to see if input gene is present in input data
+      validate(need(nrow(summary_brain %>%
+                           dplyr::filter(input$gene_text %in% nuc_gene)) > 0 | nrow(summary_brain %>%
+                                                                                      dplyr::filter(input$gene_text %in% gene_name)) > 0, "
                       Gene not found in data"))
       validate(need(input$gene_text != "", "
                       Please provide a gene ID (ENS/symbol)"))
@@ -326,6 +332,10 @@ shinyApp(
     )
     
     output$enrichments <- renderPlot({
+      
+      summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
+      summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
+      grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
       
       gene_list = as.character(unique(strsplit(input$gene_list_text, ", ")[[1]]))
       

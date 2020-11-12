@@ -23,12 +23,26 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
   }
   
   ### preparing brain region data -----------------------------------------------------
+  
+  # # filtering for gene R value and pivoting data
+  # summary_gene_corrs = summary_brain %>% 
+  #   dplyr::filter(nuc_gene == gene) %>% 
+  #   dplyr::select(matches("corr|gene")) %>% 
+  #   tidyr::gather(key="region", value="corrs", -c("mt_gene", "nuc_gene", "gene_name")) %>% 
+  #   dplyr::arrange(region)
 
   summary_gene_corrs = summary_brain %>%
     dplyr::filter(nuc_gene == gene) %>%
     dplyr::select(matches("corr|gene")) %>%
     tidyr::pivot_longer(cols=contains("corr"), names_to="region", values_to="corrs") %>%
     dplyr::arrange(region)
+  
+  # # getting pvalues 
+  # summary_gene_pval = summary_brain %>% 
+  #   dplyr::filter(nuc_gene == gene) %>% 
+  #   dplyr::select(matches("pval")) %>% 
+  #   tidyr::gather(key="region", value="pval") %>% 
+  #   dplyr::arrange(region)
   
   summary_gene_pval = summary_brain %>%
     dplyr::filter(nuc_gene == gene) %>%
@@ -56,7 +70,7 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
   summary_gene = rbind(summary_gene, summary_gene_ctrl)
   
   # add sig indicator
-  summary_gene = summary_gene %>% mutate(sig_indicator = ifelse(summary_gene$pval < 0.05 & summary_gene$pval > 0.01, '*',
+  summary_gene = summary_gene %>% dplyr::mutate(sig_indicator = ifelse(summary_gene$pval < 0.05 & summary_gene$pval > 0.01, '*',
                                                                 ifelse(summary_gene$pval < 0.01 & summary_gene$pval > 0.001, '**',
                                                                        ifelse(summary_gene$pval < 0.001, '***', ''))))
   
@@ -72,24 +86,22 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
   summary_gene$mt_gene = convert_sym_ens(summary_gene$mt_gene, same_length=TRUE)
   
   #plotting heatmap
-  p = ggplot(summary_gene, aes(x=reorder(region, corrs), y=reorder(mt_gene, corrs), fill=corrs)) +
-    theme_minimal(base_size=11) +
-    theme(plot.title = element_text(hjust = 0.5)) +
-    geom_tile() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) + # rotates x axis
-    ggtitle(gene_sym) +
-    theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0, size=9)) +
-    scale_fill_gradient2(low = "red", mid = "white", high = "blue", limits=c(-1,1)) +
-    geom_text(aes(label=sig_indicator), size=3) +
-    labs(y="mtDNA-encoded gene", x="", fill=expression(rho), subtitle = "* 0.01<p<0.05, ** 0.001<p<0.01, *** p<0.001")
-  
-  return(p)
+  return(ggplot(summary_gene, aes(x=reorder(region, corrs), y=reorder(mt_gene, corrs), fill=corrs)) +
+           theme_minimal(base_size=11) +
+           theme(plot.title = element_text(hjust = 0.5)) +
+           geom_tile() +
+           theme(axis.text.x = element_text(angle = 45, hjust = 1)) + # rotates x axis
+           ggtitle(gene_sym) +
+           theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0, size=9)) +
+           scale_fill_gradient2(low = "red", mid = "white", high = "blue", limits=c(-1,1)) +
+           geom_text(aes(label=sig_indicator), size=3) +
+           labs(y="mtDNA-encoded gene", x="", fill=expression(rho), subtitle = "* 0.01<p<0.05, ** 0.001<p<0.01, *** p<0.001"))
   
 }
 
 # #test
 # start.time = Sys.time()
-# print(heatmap_of_gene_corrs(gene="SOD2", summary_brain=summary_brain, summary_controls=summary_controls)) #ENSG00000005194
+# heatmap_of_gene_corrs(gene="SOD2", summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194
 # end.time = Sys.time()
 # time.taken = end.time - start.time
 # print(time.taken)
