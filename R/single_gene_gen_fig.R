@@ -9,7 +9,7 @@ GenFigSingleGene = function(arg1){
                                                    ,nrow=2,
                                                    ncol=1,
                                                    labels=c("A", "B")),
-                                 bottom = text_grob("Plot produced using the MitoNuclearCOEXPlorer tool [https://snca.atica.um.es/MitoNuclearCOEXPlorer/]", color = "black",
+                                 bottom = text_grob("Plot produced using the MitoNuclearCOEXPlorer tool [https://ainefairbrotherbrowne.shinyapps.io/MitoNuclearCOEXPlorer/]", color = "black",
                                                     hjust = 1, x = 1, face = "italic", size = 10)))
 }
 

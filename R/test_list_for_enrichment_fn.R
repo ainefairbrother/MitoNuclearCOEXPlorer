@@ -229,7 +229,7 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
     time.taken = end.time - start.time
     print(paste("Runtime =", time.taken))
     return(ggpubr::annotate_figure(fig,
-                                   bottom = text_grob("Analysis and visualisation provided by the MitoNuclearCOEXPlorer tool [https://snca.atica.um.es/MitoNuclearCOEXPlorer/]", color = "black",
+                                   bottom = text_grob("Analysis and visualisation provided by the MitoNuclearCOEXPlorer tool [https://ainefairbrotherbrowne.shinyapps.io/MitoNuclearCOEXPlorer/]", color = "black",
                                                       hjust = 1, x = 1, face = "italic", size = 10)))
     
   }else{

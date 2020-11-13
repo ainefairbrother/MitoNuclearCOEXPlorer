@@ -411,7 +411,8 @@ shinyApp(
         paste("MitoNuclearCOEXPlorer_correlations_12_CNS_regions","csv",sep=".")
       },
       content = function(con){
-        file.copy('./data/GTEx_brain_summary_table.csv', con)
+        write.csv(summary_brain, con)
+        
       })
     
     output$downloadCTRL <- downloadHandler(
@@ -419,7 +420,7 @@ shinyApp(
         paste("MitoNuclearCOEXPlorer_correlations_heart_and_muscle","csv",sep=".")
       },
       content = function(con){
-        file.copy('./data/GTEx_control_tissues_summary_table.csv', con)
+        write.csv(summary_controls, con)
       })
     
     output$downloadSINGLEGENE <- downloadHandler(
