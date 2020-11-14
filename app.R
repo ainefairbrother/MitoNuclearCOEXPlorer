@@ -186,9 +186,9 @@ shinyApp(
                              checkboxInput(inputId="bkg", label="Filter background for protein coding genes only", value=FALSE), 
                              h4("Bootstraps"),
                              helpText("Enter the number of random gene sets to compare the target set against.
-                                      10,000 recommended for accuracy of P-values, but is slower to render (~15mins for a gene set of size 40)
+                                      10,000 recommended for accuracy of P-values, but is memory intensive, so contact author to run. 
                                       ", style = "font-size:11px;"),
-                             radioButtons(inputId="iters", label=NULL, choices = c("10"=10, "100"=100, "1000"=1000, "10000"=10000), selected = "10", inline = FALSE, width = NULL),
+                             radioButtons(inputId="iters", label=NULL, choices = c("10"=10, "100"=100, "1000"=1000), selected = "10", inline = FALSE, width = NULL),
                              br(),
                              submitButton(text = "Submit", icon = NULL, width = NULL),
                              hr(),
@@ -273,7 +273,7 @@ shinyApp(
                                       wellPanel(
                                         div(
                                           h3("MitoNuclearCOEXPlorer was developed by Aine Fairbrother-Browne"),
-                                          p('A collaboration between the Hodgkinson and Ryten laboratories, with thanks to the University of Murcia'),
+                                          p('A collaboration between the Hodgkinson and Ryten laboratories'),
                                           br(),
                                           h4('For any questions related to this resource or publication please contact:'),
                                           p('Aine Fairbrother-Browne for technical issues and general questions about the project - aine.fairbrother-browne.18@ucl.ac.uk'),
@@ -295,8 +295,8 @@ shinyApp(
                                           br(),
                                           br(),
                                           img(src="kcl_logo.png", width="5.25%"),
-                                          img(src="ucl-logo-colours-notext.png", width="13.875%"),
-                                          img(src="uom_logo.png", width="15%"), style="text-align: center;")
+                                          img(src="ucl-logo-colours-notext.png", width="13.875%")
+  
                                       )))))
   ),
   
