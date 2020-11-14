@@ -22,6 +22,9 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
     }
   }
   
+  print(gene)
+  print(gene_sym)
+  
   ### preparing brain region data -----------------------------------------------------
 
   # get correlations 

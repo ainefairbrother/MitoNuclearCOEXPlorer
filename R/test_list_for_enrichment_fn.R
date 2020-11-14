@@ -17,6 +17,8 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
   gene_list_spl = strsplit(gene_list, ', ')[[1]]
   iters = as.double(iters)
   
+  print(gene_list_spl)
+  
   stopifnot(length(gene_list_spl) > 1)
   
   if(grepl('ENS', gene_list_spl[1])){
