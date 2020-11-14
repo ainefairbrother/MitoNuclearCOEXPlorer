@@ -517,10 +517,7 @@ shinyApp(
         write.csv(final_df, con)
       }
     )
-    
-    
   }
-  
 )
 
 

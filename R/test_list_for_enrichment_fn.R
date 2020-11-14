@@ -2,12 +2,6 @@
 # Aine Fairbrother-Browne
 # 2020
 
-densMode = function(x){
-  td = density(x)
-  maxDens = which.max(td$y)
-  list(x=td$x[maxDens], y=td$y[maxDens])
-}
-
 test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_coding=F, return_which='plot'){
   
   # function to take in a list of user-inputted genes
@@ -28,11 +22,6 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
     gene_sym = gene_list_spl
     gene_list_spl = convert_sym_ens(gene_list_spl, input_ENS=F)
   }
-  
-  # test for gene list being protein coding
-  grch_list = grch %>%
-    dplyr::filter(gene_id %in% gene_list_spl) %>% 
-    dplyr::select(c(gene_id, gene_biotype))
   
   # get region names and corresponding col labels 
   region_names = colnames(summary_brain %>%
@@ -55,11 +44,11 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
   pcutoff = 0.05/(length(region_names))
   
   # parallelise across regions, calculating the deviance of the list from random for each region
-  prod_region_plot = function(region, return_which_sub){
+  prod_region_plot = function(region_, return_which_sub){
     
-    # subset the summary table for region in current loop
+    # subset the summary table for region_ in current loop
     summary_region = summary_brain %>% 
-      dplyr::select(region, 'nuc_gene')
+      dplyr::select(region_, 'nuc_gene')
     
     # filtering background list for biotype - depending on checkbox selection
     # preparing background list
@@ -73,7 +62,7 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
       nuc_gene_list = as.character(unique(summary_region$nuc_gene))
     }
     
-    # subset the region subset for genes in the gene panel
+    # subset the region_ subset for genes in the gene panel
     summary_region_gene_panel_subset = summary_region %>% 
       dplyr::filter(nuc_gene %in% gene_list_spl)
     
@@ -100,7 +89,7 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
       stopifnot(dim(get_all_pairs)[1] == length(gene_list_spl)*13)
       
       # collect rand vecs
-      rand_vals = as.vector(get_all_pairs[,c(region)])
+      rand_vals = as.vector(get_all_pairs[,c(region_)])
       rand_arr[j,] = rand_vals
       
       # add medians to array
@@ -115,39 +104,39 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
     below_pop_med = sum(med_arr < pop_med)
     
     # assign values to df
-    emptydf['gene_set_med', region] = pop_med
-    emptydf['random_set_med', region] = med_of_med_arr
-    emptydf['num_above_rand_med', region] = above_pop_med
-    emptydf['num_below_rand_med', region] = below_pop_med
+    emptydf['gene_set_med', region_] = pop_med
+    emptydf['random_set_med', region_] = med_of_med_arr
+    emptydf['num_above_rand_med', region_] = above_pop_med
+    emptydf['num_below_rand_med', region_] = below_pop_med
     
     # calculate p
     if(pop_med < med_of_med_arr){
       p = as.numeric((iters-above_pop_med)/iters)
       if(p == 0){ # instead of a pvalue of 0, it gives p<1/number of iters
-        emptydf['p', region] = 1/iters
+        emptydf['p', region_] = 1/iters
       } else{
-        emptydf['p', region] = p
+        emptydf['p', region_] = p
       }
     }
     
     if(pop_med > med_of_med_arr){
       p = as.numeric((iters-below_pop_med)/iters)
       if(p == 0){
-        emptydf['p', region] = 1/iters
+        emptydf['p', region_] = 1/iters
       } else{
-        emptydf['p', region] = p
+        emptydf['p', region_] = p
       }
     }
     
-    p = as.numeric(emptydf['p', region])
+    p = as.numeric(emptydf['p', region_])
     
     if(return_which_sub == 'plot'){
       
-      if((emptydf['p', region] < 0.05) & (emptydf['p', region] > pcutoff)){
-        emptydf['sig_indicator', region] = '*'
+      if((emptydf['p', region_] < 0.05) & (emptydf['p', region_] > pcutoff)){
+        emptydf['sig_indicator', region_] = '*'
       }
-      if(emptydf['p', region] < pcutoff){
-        emptydf['sig_indicator', region] = '**'
+      if(emptydf['p', region_] < pcutoff){
+        emptydf['sig_indicator', region_] = '**'
       }
       
       # downsampling rand_arr to 10% to allow graphics to plot more efficiently 
@@ -168,7 +157,7 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
       pl = ggplot() +
         theme_minimal(base_size=10) +
         xlim(-1,1) + 
-        ggtitle(region) +
+        ggtitle(region_) +
         xlab(expression(rho)) + 
         theme(plot.title = element_text(hjust = 0.5), 
               legend.key = element_rect(fill = "transparent", colour = "transparent"),
@@ -176,7 +165,7 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
               legend.box.background = element_blank(),
               legend.position = c(0.15,0.9)) +
         
-        # plot the random distributions of gene sets for the current region
+        # plot the random distributions of gene sets for the current region_
         geom_density(data=rand_arr, 
                      aes(x=value, group=key, colour='Random gene sets'), alpha=0.001, fill='lightgrey') +
         
@@ -184,9 +173,9 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
         geom_vline(xintercept=as.numeric(med_of_med_arr, 
                                          colour='Random gene set median'), colour='aquamarine4', linetype='dashed', size=0.5) + 
         
-        # plot the gene panel distribution for the current region 
+        # plot the gene panel distribution for the current region_ 
         geom_density(data=summary_region_gene_panel_subset, 
-                     aes_q(x=summary_region_gene_panel_subset[,region], colour='Target gene set'), alpha=0.5, fill='lightgrey') +
+                     aes_q(x=summary_region_gene_panel_subset[,region_], colour='Target gene set'), alpha=0.5, fill='lightgrey') +
         
         # plot a line to indicate the median r value of the gene set
         geom_vline(xintercept=as.numeric(pop_med), 
@@ -223,33 +212,32 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
   # RUN ANALYSIS AND RENDER PLOT
   print("Running analysis...")
   start.time = Sys.time()
-
+  
   if(return_which == 'plot'){
-    plot_vect = lapply(region_names, prod_region_plot, return_which_sub='plot')
-    fig = ggpubr::ggarrange(plotlist=plot_vect, common.legend=F, ncol=3, nrow=4)
-    end.time = Sys.time()
-    time.taken = end.time - start.time
-    print(paste("Runtime =", time.taken))
-    return(ggpubr::annotate_figure(fig,
-                                   bottom = text_grob("Analysis and visualisation provided by the MitoNuclearCOEXPlorer tool [https://ainefairbrotherbrowne.shinyapps.io/MitoNuclearCOEXPlorer/]", color = "black",
-                                                      hjust = 1, x = 1, face = "italic", size = 10)))
+    plot_vect = 
+      return(ggpubr::annotate_figure(ggpubr::ggarrange(plotlist=lapply(region_names, prod_region_plot, return_which_sub='plot'), 
+                                                       common.legend=F, 
+                                                       ncol=3, 
+                                                       nrow=4),
+                                     bottom = text_grob("Analysis and visualisation provided by the MitoNuclearCOEXPlorer tool [https://ainefairbrotherbrowne.shinyapps.io/MitoNuclearCOEXPlorer/]", color = "black",
+                                                        hjust = 1, 
+                                                        x = 1, 
+                                                        face = "italic", 
+                                                        size = 10)))
     
   }else{
     pval = lapply(region_names, prod_region_plot, return_which_sub='pval')
     names(pval) = region_names
-    end.time = Sys.time()
-    time.taken = end.time - start.time
-    print(paste("Runtime =", time.taken))
     return(pval)
   }
   
 }
 
-# start.time = Sys.time()
-# ls = "ALKBH1, C1QBP, CDK5RAP1"
-# test_list_for_enrichment(ls, iters=100, T)
-# end.time = Sys.time()
-# time.taken = end.time - start.time
-# print(time.taken)
+start.time = Sys.time()
+ls = "ALKBH1, C1QBP, CDK5RAP1"
+test_list_for_enrichment(ls, iters=1000, T)
+end.time = Sys.time()
+time.taken = end.time - start.time
+print(time.taken)
 
 
