@@ -62,11 +62,11 @@ genDistributionPlotWithGene = function(gene, summary_brain){
         colour='mean correlation value across 13 mtDNA genes'),
       linetype='dashed',
       size=0.5,
-      alpha=0.3) +
+      alpha=0.8) +
     
     # add annotation to distplot: mean rho
     geom_label(
-      size=3,
+      size=4,
       data = gene_mean_label_df,
       mapping = aes(label=paste0("\U03BC", '=', label),
                     x = as.numeric(label),
@@ -81,7 +81,7 @@ genDistributionPlotWithGene = function(gene, summary_brain){
     scale_fill_manual(guide = FALSE, values=c('red'='#FF1E0E', 'blue'='#1F0FFF')) +
     
     # add legend
-    scale_color_manual(name = '', values = c('mean correlation value across 13 mtDNA genes'= '#3016FF'),
+    scale_color_manual(name = '', values = c('mean correlation value across 13 mtDNA genes'= 'darkgrey'),
                        labels = paste(gene_sym, 'mean correlation value across 13 mtDNA genes'))
   
   return(distPlot)
