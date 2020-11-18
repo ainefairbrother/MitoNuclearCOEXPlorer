@@ -95,8 +95,8 @@ heatmap_of_gene_corrs = function(gene, summary_brain, summary_controls){
            labs(y="mtDNA-encoded gene", x="", fill=expression(rho), subtitle = "* 0.01<p<0.05, ** 0.001<p<0.01, *** p<0.001"))
 }
 
-# # #test
-# gene = "ENSG00000197548"
+# #test
+# gene = "SOD2"
 # start.time = Sys.time()
 # heatmap_of_gene_corrs(gene=gene, summary_brain=summary_brain, summary_controls=summary_controls) #ENSG00000005194
 # end.time = Sys.time()
