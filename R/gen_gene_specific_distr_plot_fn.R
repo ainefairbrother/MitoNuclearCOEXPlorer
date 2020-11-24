@@ -90,11 +90,11 @@ genDistributionPlotWithGene = function(gene, summary_brain){
   
 }
 
-#test
-start.time = Sys.time()
-gene='SOD2'
-genDistributionPlotWithGene(gene=gene, summary_brain=summary_brain)
-end.time = Sys.time()
-time.taken = end.time - start.time
-print(time.taken)
+# #test
+# start.time = Sys.time()
+# gene='SOD2'
+# genDistributionPlotWithGene(gene=gene, summary_brain=summary_brain)
+# end.time = Sys.time()
+# time.taken = end.time - start.time
+# print(time.taken)
 
