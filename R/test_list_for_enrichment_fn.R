@@ -2,7 +2,7 @@
 # Aine Fairbrother-Browne
 # 2020
 
-test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_coding=F, return_which='plot'){
+test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_coding=F, return_which='plot', user_label=''){
   
   # function to take in a list of user-inputted genes
   # determines enrichment of this gene set in high -ve and +ve mito relationships
@@ -219,6 +219,10 @@ test_list_for_enrichment = function(gene_list, iters, filt_bkg_for_protein_codin
                                                        common.legend=F, 
                                                        ncol=3, 
                                                        nrow=4),
+                                     top = text_grob(paste("\n", user_label, "\n"), 
+                                                     color = "black", 
+                                                     #face = "bold", 
+                                                     size = 18),
                                      bottom = text_grob("Analysis and visualisation provided by the MitoNuclearCOEXPlorer tool [https://ainefairbrotherbrowne.shinyapps.io/MitoNuclearCOEXPlorer/]", color = "black",
                                                         hjust = 1, 
                                                         x = 1, 

@@ -27,19 +27,22 @@ library(ggplot2)
 library(aws.s3)
 library(lobstr)
 
-# read files from AWS -- data remote repository AWS bucket
-Sys.setenv("AWS_ACCESS_KEY_ID"=Sys.getenv("AWS_ACCESS_KEY_ID"),
-           "AWS_SECRET_ACCESS_KEY"=Sys.getenv("AWS_SECRET_ACCESS_KEY"),
-           "AWS_DEFAULT_REGION"=Sys.getenv("AWS_DEFAULT_REGION"))
+# # # # loading tables from local and assigning to global
+# grch <<- read.fst("/home/abrowne/shiny/MitoNuclearCOEXPlorer_additional_files/data/grch3897_small.fst")
+# summary_brain <<- read.fst("/home/abrowne/shiny/MitoNuclearCOEXPlorer_additional_files/data/GTEx_brain_summary_table.fst")
+# summary_controls <<- read.fst("/home/abrowne/shiny/MitoNuclearCOEXPlorer_additional_files/data/GTEx_control_tissues_summary_table.fst")
 
-# # # loading tables and assigning to global -- local running
-# grch <<- read.fst("./data/grch3897.fst")
-# summary_brain <<- read.fst("./data/GTEx_brain_summary_table.fst")
-# summary_controls <<- read.fst("./data/GTEx_control_tissues_summary_table.fst")
+# # # # loading data from AWS
+# # read files from AWS -- data remote repository AWS bucket
+# Sys.setenv("AWS_ACCESS_KEY_ID"=Sys.getenv("AWS_ACCESS_KEY_ID"),
+#            "AWS_SECRET_ACCESS_KEY"=Sys.getenv("AWS_SECRET_ACCESS_KEY"),
+#            "AWS_DEFAULT_REGION"=Sys.getenv("AWS_DEFAULT_REGION"))
 
-summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
-summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
-grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
+# summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
+# summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
+# grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
+
+load("./.RData")
 
 # importing fns
 source("./R/convert_sym_ens.R")
@@ -180,6 +183,12 @@ shinyApp(
                              helpText("e.g. ENSG00000101986, ENSG00000141385, ENSG00000003393, ENSG00000214274,...", style = "font-size:11px;"),
                              # input box to insert gene list
                              textInput(inputId = "gene_list_text", label=NULL, value="", width="100%"),
+                             
+                             # user gene list label functionality
+                             helpText("Add an optional label", style = "font-size:11px;"),
+                             textInput(inputId = "user_gene_list_label", label=NULL, value="", width="100%"),
+                             
+                             
                              h4("Background gene set"),
                              helpText("If your gene list is protein coding, it is preferable to match its biotype to that of the background list", style = "font-size:11px;"),
                              # checkbox to filter background list
@@ -344,7 +353,7 @@ shinyApp(
 
                       Less than 2 genes found in data"))
       
-      test_list_for_enrichment(gene_list=input$gene_list_text, iters=input$iters, filt_bkg_for_protein_coding=input$bkg)
+      test_list_for_enrichment(gene_list=input$gene_list_text, iters=input$iters, filt_bkg_for_protein_coding=input$bkg, user_label=input$user_gene_list_label)
       
     },
     height = 950, 
@@ -468,7 +477,7 @@ shinyApp(
     
     output$downloadENRICHMENT <- downloadHandler(
       filename = function(){
-        paste0("MitoNuclearCOEXPlorer_n=", length(strsplit(input$gene_list_text, ', ')[[1]]), "_bootstraps=", input$iters, "_", Sys.time(), ".png", sep="")
+        paste0("MitoNuclearCOEXPlorer_", gsub(" ", "_", input$user_gene_list_label), "_n=", length(strsplit(input$gene_list_text, ', ')[[1]]), "_bootstraps=", input$iters, "_", Sys.time(), ".png", sep="")
       },
       content=function(file){
         ggsave(file, device = "png", width=40, height=40, units="cm")
