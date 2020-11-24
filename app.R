@@ -26,6 +26,7 @@ library(ggpubr)
 library(ggplot2)
 library(aws.s3)
 library(lobstr)
+library(gdata)
 
 # # # # loading tables from local and assigning to global
 # grch <<- read.fst("/home/abrowne/shiny/MitoNuclearCOEXPlorer_additional_files/data/grch3897_small.fst")

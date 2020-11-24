@@ -32,11 +32,12 @@ genDistributionPlotWithGene = function(gene, summary_brain){
     dplyr::select(matches("corr|nuc_gene")) %>% 
     tidyr::pivot_longer(2:13, names_to='region', values_to='R_value') %>% 
     dplyr::mutate(region = gsub('_corrs', '', gsub('Brain', '', gsub('basalganglia', 'BG', region))))
-  
+
   gene_mean_across_mt_df = summary_brain_clean %>%
     dplyr::filter(nuc_gene == gene) %>%
     dplyr::group_by(region) %>%
-    dplyr::mutate(gene_mean_across_mt = round(mean(R_value), 4))
+    dplyr::mutate(gene_mean_across_mt = round(mean(R_value), 4)) %>% 
+    dplyr::arrange(gene_mean_across_mt)
   
   gene_mean_label_df = data.frame(
     region = unique(gene_mean_across_mt_df$region),
@@ -44,12 +45,13 @@ genDistributionPlotWithGene = function(gene, summary_brain){
     dplyr::mutate(label_colour = ifelse(label>0, 'blue', 'red')) %>% 
     dplyr::arrange(label)
   
-  distPlot = ggplot(data=summary_brain_clean, aes(x=R_value)) +
+  distPlot = ggplot(data=summary_brain_clean %>% 
+                      dplyr::mutate(region=gdata::reorder.factor(region, new.order=unique(gene_mean_across_mt_df$region))), aes(x=R_value)) +
     theme_minimal(base_size=11) +
     theme(plot.title = element_text(hjust = 0.5)) +
     theme(legend.position="top") +
     geom_density(fill='lightgrey', colour='white', alpha=0.5) + #ECDEFF
-    facet_wrap(facets=vars(region), nrow=4, ncol=3) +
+    facet_wrap(~region, nrow=4, ncol=3) +
     xlim(-1,1) +
     xlab(expression(rho)) +
     ylab('Density') +
@@ -88,11 +90,11 @@ genDistributionPlotWithGene = function(gene, summary_brain){
   
 }
 
-# #test
-# start.time = Sys.time()
-# gene='SOD2'
-# genDistributionPlotWithGene(gene=gene, summary_brain=summary_brain)
-# end.time = Sys.time()
-# time.taken = end.time - start.time
-# print(time.taken)
+#test
+start.time = Sys.time()
+gene='SOD2'
+genDistributionPlotWithGene(gene=gene, summary_brain=summary_brain)
+end.time = Sys.time()
+time.taken = end.time - start.time
+print(time.taken)
 
