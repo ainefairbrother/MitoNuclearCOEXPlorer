@@ -5,7 +5,7 @@
   * See the [MitoNuclearCOEXPlorer](https://ainefairbrotherbrowne.shinyapps.io/MitoNuclearCOEXPlorer/) tool for analyses options offered and example outputs  
 
 ## Description
-This repository contains the User Interface (UI) code for the Mito-nuclear Brain Browser platform and accompanying back-end functions. 
+This repository contains the User Interface (UI) code for the MitoNuclearCOEXPlorer platform and accompanying back-end functions. 
 
 ## Getting Started
 The tool can be reached here: [MitoNuclearCOEXPlorer](https://ainefairbrotherbrowne.shinyapps.io/MitoNuclearCOEXPlorer/)
