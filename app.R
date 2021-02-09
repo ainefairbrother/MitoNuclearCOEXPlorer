@@ -28,21 +28,6 @@ library(aws.s3)
 library(lobstr)
 library(gdata)
 
-# # # # loading tables from local and assigning to global
-# grch <<- read.fst("/home/abrowne/shiny/MitoNuclearCOEXPlorer_additional_files/data/grch3897_small.fst")
-# summary_brain <<- read.fst("/home/abrowne/shiny/MitoNuclearCOEXPlorer_additional_files/data/GTEx_brain_summary_table.fst")
-# summary_controls <<- read.fst("/home/abrowne/shiny/MitoNuclearCOEXPlorer_additional_files/data/GTEx_control_tissues_summary_table.fst")
-
-# # # # loading data from AWS
-# # read files from AWS -- data remote repository AWS bucket
-# Sys.setenv("AWS_ACCESS_KEY_ID"=Sys.getenv("AWS_ACCESS_KEY_ID"),
-#            "AWS_SECRET_ACCESS_KEY"=Sys.getenv("AWS_SECRET_ACCESS_KEY"),
-#            "AWS_DEFAULT_REGION"=Sys.getenv("AWS_DEFAULT_REGION"))
-
-# summary_controls <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_control_tissues_summary_table.fst")
-# summary_brain <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/GTEx_brain_summary_table.fst")
-# grch <<- aws.s3::s3read_using(read.fst, object = "s3://shinyapp-mitonuclear/grch3897_small.fst")
-
 load("./.RData")
 
 # importing fns
@@ -59,6 +44,8 @@ shinyApp(
   # user interface
   ui = navbarPage("MitoNuclearCOEXPlorer",
                   
+                  
+                  
                   #theme = shinytheme("yeti"),
                   
                   tabPanel("Welcome",
@@ -66,6 +53,8 @@ shinyApp(
                            # ---------------------- WELCOME TAB ------------------------------
                            
                            fluidPage(
+                             
+                             tags$head(includeHTML(("google-analytics.html"))),
                              
                              br(),
                              
@@ -269,7 +258,9 @@ shinyApp(
                                column(8,
                                       offset=2,
                                       wellPanel(
-                                        p('[Link to pre-print here]')
+                                        tags$ul(
+                                          "For further methodological details see our pre-print ", tagList(a("here.", href="https://www.biorxiv.org/content/10.1101/2021.02.04.429781v1"))
+                                          )
                                       ))))),
                   
                   # ---------------------- CONTACT TAB ------------------------------
