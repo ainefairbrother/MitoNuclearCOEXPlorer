@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/298283109.svg)](https://zenodo.org/badge/latestdoi/298283109)
+
 # MitoNuclearCOEXPlorer
   * The MitoNuclearCOEXPlorer tool allows exploration of relationships between target gene(s) of nuclear origin and the mitochondrial genome  
   * Levaraging transcriptomic data from the GTEx project, nuclear-mitochondrial co-ordination was quantified by correlating expression levels of nDNA- and mtDNA-encoded genes  
