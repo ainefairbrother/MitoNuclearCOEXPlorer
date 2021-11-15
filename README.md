@@ -14,6 +14,8 @@ The tool can be reached here: [MitoNuclearCOEXPlorer](https://ainefairbrotherbro
 
 ## Related publication
 
+Find the associated publication [here](https://www.nature.com/articles/s42003-021-02792-w)
+
 ## Developers
 * **Aine Fairbrother-Browne** - UI and backend developer
   * Get in touch with Aine at [aine.fairbrother-browne.18@ucl.ac.uk](mailto:aine.fairbrother-browne.18@ucl.ac.uk).
